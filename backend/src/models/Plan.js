@@ -52,23 +52,27 @@ const planSchema = new mongoose.Schema(
 
 planSchema.index({ goal: 1, version: -1 });
 
+// A query that selects only the summary fields leaves `sessions` undefined, and
+// these run on every serialisation — so they must cope with it not being there.
 planSchema.virtual('totalMinutes').get(function totalMinutes() {
-  return this.sessions.reduce((sum, session) => sum + session.minutes, 0);
+  return (this.sessions ?? []).reduce((sum, session) => sum + session.minutes, 0);
 });
 
 planSchema.virtual('completedMinutes').get(function completedMinutes() {
-  return this.sessions
+  return (this.sessions ?? [])
     .filter((session) => session.status === 'completed')
     .reduce((sum, session) => sum + session.minutes, 0);
 });
 
 planSchema.virtual('completionPercent').get(function completionPercent() {
-  if (this.sessions.length === 0) {
+  const sessions = this.sessions ?? [];
+
+  if (sessions.length === 0) {
     return 0;
   }
 
-  const done = this.sessions.filter((session) => session.status === 'completed').length;
-  return Math.round((done / this.sessions.length) * 100);
+  const done = sessions.filter((session) => session.status === 'completed').length;
+  return Math.round((done / sessions.length) * 100);
 });
 
 planSchema.set('toJSON', {

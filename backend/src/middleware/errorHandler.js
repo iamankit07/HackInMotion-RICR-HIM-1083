@@ -26,7 +26,9 @@ export function errorHandler(err, req, res, _next) {
     body.error.details = details;
   }
 
-  if (!isProduction && status >= 500) {
+  // A 503 we raised on purpose is not a bug, so it carries no stack trace even
+  // in development. Only genuinely unexpected failures get one.
+  if (!isProduction && status >= 500 && !(err instanceof ApiError)) {
     body.error.stack = err.stack;
   }
 

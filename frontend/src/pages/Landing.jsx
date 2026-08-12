@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 
 import { Logo } from '../components/Logo.jsx';
 import { Button } from '../components/ui/Button.jsx';
+import { ThemeToggle } from '../components/ThemeToggle.jsx';
 
 const STEPS = [
   {
@@ -36,6 +37,7 @@ export default function Landing() {
         </div>
 
         <div className="flex items-center gap-2">
+          <ThemeToggle className="mr-1" />
           <Link to="/sign-in">
             <Button variant="ghost" size="sm">Sign in</Button>
           </Link>

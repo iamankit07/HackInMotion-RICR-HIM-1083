@@ -3,6 +3,7 @@ import { Link, NavLink, Outlet, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { Logo } from './Logo.jsx';
 import { Button } from './ui/Button.jsx';
+import { ThemeToggle } from './ThemeToggle.jsx';
 
 export function AppLayout() {
   const { user, signOut } = useAuth();
@@ -25,6 +26,7 @@ export function AppLayout() {
           )}
 
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <span className="hidden text-sm text-ink-muted sm:block">{user?.name}</span>
             <Button variant="ghost" size="sm" onClick={signOut}>
               Sign out

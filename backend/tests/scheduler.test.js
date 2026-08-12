@@ -135,6 +135,26 @@ test('gives a weak topic more time than a strong one of the same size', () => {
   );
 });
 
+test('does not re-teach time the student has already put in', () => {
+  const one = [topic('covered', { estimatedMinutes: 60 })];
+
+  const fresh = plan({ topics: one, progressByTopic: masteryMap({ covered: 0.4 }) });
+  const partlyDone = plan({
+    topics: one,
+    progressByTopic: new Map([['covered', { mastery: 0.4, minutesStudied: 40 }]]),
+  });
+
+  const learningMinutes = (result) =>
+    result.sessions
+      .filter((session) => session.kind === 'learn')
+      .reduce((sum, session) => sum + session.minutes, 0);
+
+  assert.ok(
+    learningMinutes(partlyDone) < learningMinutes(fresh),
+    'forty minutes of completed study should reduce what is left to schedule',
+  );
+});
+
 test('puts the most urgent unblocked topic first', () => {
   const { sessions } = plan({
     progressByTopic: masteryMap({ processes: 0.9, memory: 0.05 }),

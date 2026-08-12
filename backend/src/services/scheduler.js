@@ -69,11 +69,22 @@ export function generateSchedule({
   const learningBudget = Math.round(capacityMinutes * (1 - RESERVED_RATIO));
 
   const ordered = orderByPrerequisitesThenPriority(topics, masteryOf);
-  const requested = ordered.map((topic) => ({
-    topic,
-    minutes: minutesFor(topic, masteryOf(topic.key)),
-    reason: explain(topic, masteryOf(topic.key)),
-  }));
+
+  // Time already spent on a topic counts. Without this, re-planning after a
+  // missed day would send the student back to the beginning of material they
+  // have already worked through.
+  const requested = ordered
+    .map((topic) => {
+      const mastery = masteryOf(topic.key);
+      const invested = progressByTopic.get(topic.key)?.minutesStudied ?? 0;
+
+      return {
+        topic,
+        minutes: Math.max(0, minutesFor(topic, mastery) - invested),
+        reason: explain(topic, mastery),
+      };
+    })
+    .filter((item) => item.minutes > 0);
 
   const demandMinutes = requested.reduce((sum, item) => sum + item.minutes, 0);
   const compression = demandMinutes > learningBudget ? learningBudget / demandMinutes : 1;

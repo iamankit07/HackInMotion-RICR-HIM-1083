@@ -14,9 +14,8 @@ build/
 *.log
 npm-debug.log*
 
-# Editor / OS / local tooling
+# Editor / OS
 .vscode/
 .idea/
-.claude/
 .DS_Store
 Thumbs.db

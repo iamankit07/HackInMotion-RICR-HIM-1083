@@ -48,17 +48,17 @@ Check the API is alive at <http://localhost:5000/api/health>.
 
 ## Before your first commit
 
-Set your identity so GitHub links commits to your profile. If the email is not
-one that is verified on your GitHub account, the commit will not appear on your
-contribution graph and will not count as your work.
+Set your identity so your commits are attributed to you properly. The email has
+to be one that is verified on your GitHub account, otherwise GitHub cannot match
+the commit to you.
 
 ```bash
 git config user.name "Your Name"
 git config user.email "your-github-email@example.com"
 ```
 
-Confirm it worked after pushing: your avatar should appear next to the commit on
-GitHub. If it shows a plain grey icon instead, the email is not linked.
+After your first push, check that your avatar appears beside the commit on
+GitHub. A plain grey icon means the email is not linked to your account.
 
 ## Branches
 
@@ -96,7 +96,7 @@ update    final    done    changes    testing    asdf
 ```
 
 Commit when a piece of work is finished, not once at the end of the day. Small,
-frequent, meaningful commits are what the daily evaluation looks for.
+frequent commits are easier to review and easier to undo when something breaks.
 
 ## Pull requests
 

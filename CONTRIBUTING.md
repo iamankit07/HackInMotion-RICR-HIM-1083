@@ -22,8 +22,8 @@ You need **Node.js 20 or newer** and **MongoDB** (a local install or an Atlas
 connection string).
 
 ```bash
-git clone https://github.com/iamankit07/RICR-HIM-1083.git
-cd RICR-HIM-1083
+git clone https://github.com/iamankit07/HackInMotion-RICR-HIM-1083.git
+cd HackInMotion-RICR-HIM-1083
 ```
 
 Backend:

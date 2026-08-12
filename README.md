@@ -91,7 +91,7 @@ Keeping the schedule out of the language model is a deliberate engineering decis
 
 ### AI Provider: which, why, and how
 
-**Chosen: Google Gemini API (`gemini-flash-latest`), with Groq as an automatic fallback.**
+**Chosen: Google Gemini API (`gemini-2.5-flash`), with Groq as an automatic fallback.**
 
 We compared the options available to a student team with no budget:
 
@@ -120,7 +120,7 @@ Full integration details, prompt design and failure handling: [`docs/ai-integrat
 ## Repository Structure
 
 ```
-RICR-HIM-1083/
+HackInMotion-RICR-HIM-1083/
 ├── frontend/                 React + Vite client
 ├── backend/                  Express API server
 ├── docs/                     Design notes, AI integration, problem statement
@@ -138,8 +138,8 @@ RICR-HIM-1083/
 Requires Node.js 20+ and a MongoDB connection string (local or Atlas).
 
 ```bash
-git clone https://github.com/iamankit07/RICR-HIM-1083.git
-cd RICR-HIM-1083
+git clone https://github.com/iamankit07/HackInMotion-RICR-HIM-1083.git
+cd HackInMotion-RICR-HIM-1083
 ```
 
 **Backend**

@@ -25,6 +25,17 @@ const sessionSchema = new mongoose.Schema(
   { _id: true },
 );
 
+// Sessions are addressed by id from the client when one is ticked off, so they
+// need the same id-not-_id treatment the top-level documents get.
+sessionSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform(doc, output) {
+    delete output._id;
+    return output;
+  },
+});
+
 const planSchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },

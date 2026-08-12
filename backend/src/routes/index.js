@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import mongoose from 'mongoose';
 
+import authRoutes from './authRoutes.js';
+
 const router = Router();
 
 const DB_STATES = ['disconnected', 'connected', 'connecting', 'disconnecting'];
@@ -14,5 +16,7 @@ router.get('/health', (req, res) => {
     },
   });
 });
+
+router.use('/auth', authRoutes);
 
 export default router;

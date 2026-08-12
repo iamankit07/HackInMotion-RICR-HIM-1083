@@ -2,6 +2,7 @@ import { Router } from 'express';
 import mongoose from 'mongoose';
 
 import authRoutes from './authRoutes.js';
+import { getAiStatus } from '../services/ai/index.js';
 
 const router = Router();
 
@@ -12,6 +13,7 @@ router.get('/health', (req, res) => {
     data: {
       status: 'ok',
       database: DB_STATES[mongoose.connection.readyState] ?? 'unknown',
+      ai: getAiStatus(),
       uptime: Math.round(process.uptime()),
     },
   });

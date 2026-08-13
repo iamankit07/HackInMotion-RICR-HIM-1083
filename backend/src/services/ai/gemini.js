@@ -158,7 +158,7 @@ async function generateWithFirstWorkingModel(request, alreadyTried) {
 
       return answer;
     } catch (error) {
-      if (!isModelUnavailable(error)) {
+      if (!shouldTryAnotherModel(error)) {
         throw error;
       }
 

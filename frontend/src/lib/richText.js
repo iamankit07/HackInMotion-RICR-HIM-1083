@@ -122,11 +122,33 @@ export function stripMath(line) {
 }
 
 /**
+ * Notation the model writes without wrapping it in maths delimiters at all —
+ * `x^2/a^2 + y^2/b^2 = 1`, `sqrt(a^2 + b^2)`. It arrives as ordinary prose, so
+ * stripMath never sees it, yet it is exactly as unreadable.
+ *
+ * The rules here are deliberately narrow. `^` only counts when it is pressed up
+ * against what it raises, so the bitwise `a ^ b` in a programming question is
+ * left alone, and subscripts are ignored entirely because `snake_case` is far
+ * more common in prose than `a_1`.
+ */
+export function normalizeLooseMath(text) {
+  let out = text.replace(/\bsqrt\s*\(/gi, '√(');
+
+  out = out.replace(/([A-Za-z0-9)\]}])\^(\{[^{}]+\}|\([^()]+\)|[A-Za-z0-9]+)/g, (whole, base, raw) => {
+    const body = raw.replace(/^[{(]|[})]$/g, '');
+    const mapped = mapChars(body, SUPERSCRIPTS);
+    return mapped ? base + mapped : whole;
+  });
+
+  return out;
+}
+
+/**
  * Splits a line into styled runs. Returns objects rather than markup so the
  * component decides how to render, and nothing is injected as raw HTML.
  */
 export function parseInline(line) {
-  const text = stripMath(line);
+  const text = normalizeLooseMath(stripMath(line));
   const runs = [];
   const pattern = /(\*\*\*|\*\*|__|\*|_|`)(.+?)\1/g;
   let cursor = 0;

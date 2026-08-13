@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Button } from '../components/ui/Button.jsx';
 import { Card } from '../components/ui/Card.jsx';
 import { Loading, Notice } from '../components/ui/Feedback.jsx';
+import { RichInline, RichText } from '../components/ui/RichText.jsx';
 import { api } from '../lib/api.js';
 import { useResource } from '../lib/useResource.js';
 
@@ -78,7 +79,7 @@ export default function Quiz() {
           <Card key={index} className="p-5 sm:p-6">
             <p className="eyebrow">Question {index + 1}</p>
             <h2 className="mt-2 text-base font-semibold leading-relaxed text-ink sm:text-lg">
-              {question.prompt}
+              <RichInline content={question.prompt} />
             </h2>
 
             <div className="mt-4 flex flex-col gap-2">
@@ -105,9 +106,10 @@ export default function Quiz() {
             </div>
 
             {isReviewing && question.explanation && (
-              <p className="mt-4 border-t border-line pt-3.5 text-sm leading-relaxed text-ink-soft">
-                {question.explanation}
-              </p>
+              <RichText
+                content={question.explanation}
+                className="mt-4 border-t border-line pt-3.5 text-sm leading-relaxed text-ink-soft"
+              />
             )}
           </Card>
         ))}
@@ -156,7 +158,9 @@ function Option({ option, name, checked, correct, wrong, disabled, onChange }) {
         disabled={disabled}
         className="mt-0.5 accent-current"
       />
-      <span className="leading-relaxed">{option}</span>
+      <span className="leading-relaxed">
+        <RichInline content={option} />
+      </span>
     </label>
   );
 }

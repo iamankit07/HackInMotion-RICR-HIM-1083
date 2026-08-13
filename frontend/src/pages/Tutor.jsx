@@ -5,6 +5,7 @@ import { Button } from '../components/ui/Button.jsx';
 import { Card } from '../components/ui/Card.jsx';
 import { Loading, Notice } from '../components/ui/Feedback.jsx';
 import { Textarea } from '../components/ui/Field.jsx';
+import { RichText } from '../components/ui/RichText.jsx';
 import { api } from '../lib/api.js';
 import { useResource } from '../lib/useResource.js';
 
@@ -206,11 +207,7 @@ function Message({ message }) {
               : 'border border-line bg-sunk text-ink',
         ].join(' ')}
       >
-        {message.content.split('\n').filter(Boolean).map((line, index) => (
-          <p key={index} className={index > 0 ? 'mt-2.5' : undefined}>
-            {line}
-          </p>
-        ))}
+        <RichText content={message.content} />
       </div>
     </li>
   );

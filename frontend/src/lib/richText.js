@@ -60,11 +60,14 @@ const mapChars = (text, table) =>
 /** `^2` and `^{10}` become ² and ¹⁰ where Unicode allows, else stay readable. */
 function applyScripts(math) {
   return math
-    .replace(/\^\{([^{}]+)\}|\^(\w)/g, (whole, braced, single) => {
+    // The single-character case allows signs and brackets as well as word
+    // characters, because an ion is written Na^+ and that is the single most
+    // common piece of notation in the material this app is used for.
+    .replace(/\^\{([^{}]+)\}|\^([\w+\-=()])/g, (whole, braced, single) => {
       const body = braced ?? single;
       return mapChars(body, SUPERSCRIPTS) ?? `^(${body})`;
     })
-    .replace(/_\{([^{}]+)\}|_(\w)/g, (whole, braced, single) => {
+    .replace(/_\{([^{}]+)\}|_([\w+\-=()])/g, (whole, braced, single) => {
       const body = braced ?? single;
       return mapChars(body, SUBSCRIPTS) ?? `_(${body})`;
     });
@@ -118,7 +121,9 @@ export function stripMath(line) {
     .replace(/\\\[([\s\S]+?)\\\]/g, (m, body) => latexToText(body))
     .replace(/\\\(([\s\S]+?)\\\)/g, (m, body) => latexToText(body))
     // Single $ last, and only when it is not a currency amount like $20.
-    .replace(/\$(?!\d+(?:\.\d+)?\b)([^$\n]+?)\$/g, (m, body) => latexToText(body));
+    // The digits have to be followed by a space or the end of a clause to count
+    // as money — a digit followed by notation, as in $3\text{Na}^+$, is maths.
+    .replace(/\$(?!\d+(?:\.\d+)?(?:[\s,.;:!?)]|$))([^$\n]+?)\$/g, (m, body) => latexToText(body));
 }
 
 /**

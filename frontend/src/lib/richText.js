@@ -139,11 +139,17 @@ export function stripMath(line) {
 export function normalizeLooseMath(text) {
   let out = text.replace(/\bsqrt\s*\(/gi, '√(');
 
-  out = out.replace(/([A-Za-z0-9)\]}])\^(\{[^{}]+\}|\([^()]+\)|[A-Za-z0-9]+)/g, (whole, base, raw) => {
-    const body = raw.replace(/^[{(]|[})]$/g, '');
-    const mapped = mapChars(body, SUPERSCRIPTS);
-    return mapped ? base + mapped : whole;
-  });
+  // The charge alternative comes first so an ion written bare, Ca^2+, keeps its
+  // sign. The sign only counts when nothing follows it, which is what separates
+  // the charge in Ca^2+ from the operator in x^2+3.
+  out = out.replace(
+    /([A-Za-z0-9)\]}])\^(\{[^{}]+\}|\([^()]+\)|[A-Za-z0-9]*[+-](?![A-Za-z0-9])|[A-Za-z0-9]+)/g,
+    (whole, base, raw) => {
+      const body = raw.replace(/^[{(]|[})]$/g, '');
+      const mapped = mapChars(body, SUPERSCRIPTS);
+      return mapped ? base + mapped : whole;
+    },
+  );
 
   return out;
 }

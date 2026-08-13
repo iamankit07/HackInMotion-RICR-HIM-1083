@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Button } from '../components/ui/Button.jsx';
 import { Card } from '../components/ui/Card.jsx';
 import { Loading, Notice } from '../components/ui/Feedback.jsx';
+import { RichInline, RichText } from '../components/ui/RichText.jsx';
 import { api } from '../lib/api.js';
 import { useResource } from '../lib/useResource.js';
 
@@ -76,9 +77,12 @@ export default function Quiz() {
       <ol className="flex flex-col gap-4">
         {assessment.questions.map((question, index) => (
           <Card key={index} className="p-5 sm:p-6">
-            <p className="eyebrow">Question {index + 1}</p>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className="eyebrow">Question {index + 1}</p>
+              {isReviewing && <QuestionStatus question={question} />}
+            </div>
             <h2 className="mt-2 text-base font-semibold leading-relaxed text-ink sm:text-lg">
-              {question.prompt}
+              <RichInline content={question.prompt} />
             </h2>
 
             <div className="mt-4 flex flex-col gap-2">
@@ -105,9 +109,10 @@ export default function Quiz() {
             </div>
 
             {isReviewing && question.explanation && (
-              <p className="mt-4 border-t border-line pt-3.5 text-sm leading-relaxed text-ink-soft">
-                {question.explanation}
-              </p>
+              <RichText
+                content={question.explanation}
+                className="mt-4 border-t border-line pt-3.5 text-sm leading-relaxed text-ink-soft"
+              />
             )}
           </Card>
         ))}
@@ -118,6 +123,11 @@ export default function Quiz() {
           <Card className="flex flex-wrap items-center justify-between gap-4 p-4">
             <p className="text-sm text-ink-muted">
               {answered} of {total} answered
+              {answered < total && (
+                <span className="ml-2 text-amber">
+                  · {total - answered} left blank
+                </span>
+              )}
             </p>
             <Button variant="accent" onClick={submit} loading={submitting} disabled={answered === 0}>
               Submit and build my plan
@@ -126,6 +136,33 @@ export default function Quiz() {
         </div>
       )}
     </div>
+  );
+}
+
+/** A question is unanswered until a real option index is stored against it. */
+const isAnswered = (question) =>
+  question.selectedIndex !== null && question.selectedIndex !== undefined;
+
+function Tally({ label, value, tone }) {
+  return (
+    <div className="flex items-baseline gap-1.5">
+      <dt className="text-ink-muted">{label}</dt>
+      <dd className={['font-semibold tabular-nums', tone].join(' ')}>{value}</dd>
+    </div>
+  );
+}
+
+function QuestionStatus({ question }) {
+  const [label, tone] = !isAnswered(question)
+    ? ['Not answered', 'border-line-strong text-ink-muted']
+    : question.selectedIndex === question.correctIndex
+      ? ['Correct', 'border-teal/40 bg-teal-soft text-teal']
+      : ['Wrong', 'border-clay/40 bg-clay-soft text-clay'];
+
+  return (
+    <span className={['rounded-full border px-2 py-0.5 text-[0.6875rem] font-medium', tone].join(' ')}>
+      {label}
+    </span>
   );
 }
 
@@ -156,15 +193,24 @@ function Option({ option, name, checked, correct, wrong, disabled, onChange }) {
         disabled={disabled}
         className="mt-0.5 accent-current"
       />
-      <span className="leading-relaxed">{option}</span>
+      <span className="leading-relaxed">
+        <RichInline content={option} />
+      </span>
     </label>
   );
 }
 
 function ResultBanner({ result, assessment, goalId }) {
   const score = result?.assessment?.score ?? assessment.score;
-  const total = assessment.questions.length;
+  const questions = (result?.assessment ?? assessment).questions;
+  const total = questions.length;
   const percent = Math.round((score / total) * 100);
+
+  // A question left blank is not the same as one answered wrongly — the first
+  // means running out of time, the second means not knowing it, and a student
+  // reading their result needs to tell those apart.
+  const skipped = questions.filter((question) => !isAnswered(question)).length;
+  const wrong = total - score - skipped;
 
   const weakest = result?.progress?.weakestTopics?.slice(0, 3) ?? [];
 
@@ -181,6 +227,19 @@ function ResultBanner({ result, assessment, goalId }) {
         {score} <span className="text-ink-muted">/ {total}</span>
         <span className="ml-3 text-lg text-ink-muted">{percent}%</span>
       </p>
+
+      <dl className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+        <Tally label="Correct" value={score} tone="text-teal" />
+        <Tally label="Wrong" value={wrong} tone="text-clay" />
+        <Tally label="Not answered" value={skipped} tone="text-ink-muted" />
+      </dl>
+
+      {skipped > 0 && (
+        <p className="mt-3 text-sm text-ink-soft">
+          {skipped === 1 ? 'One question was' : `${skipped} questions were`} left blank. They are
+          marked below with the right answer, so nothing is lost.
+        </p>
+      )}
 
       {weakest.length > 0 && (
         <div className="mt-5">

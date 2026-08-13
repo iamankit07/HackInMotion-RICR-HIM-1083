@@ -79,7 +79,7 @@ export function SessionRow({ session, busy, onComplete, onUndo, onAsk, exploreTo
       </div>
 
       {anatomySystem && !done && (
-        <AnatomyViewer systemKey={anatomySystem} topicTitle={session.title} />
+        <AnatomyViewer systemKey={anatomySystem} topicTitle={session.title} className="mt-4" />
       )}
     </li>
   );

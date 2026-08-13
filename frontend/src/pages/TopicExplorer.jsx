@@ -5,6 +5,7 @@ import { Card } from '../components/ui/Card.jsx';
 import { Loading, Notice } from '../components/ui/Feedback.jsx';
 import { MasteryBar } from '../components/ProgressRing.jsx';
 import { TopicVisual } from '../components/TopicVisual.jsx';
+import { RichInline } from '../components/ui/RichText.jsx';
 import { api } from '../lib/api.js';
 import { useResource } from '../lib/useResource.js';
 import { formatMinutes } from '../lib/format.js';
@@ -47,7 +48,11 @@ export default function TopicExplorer() {
         </Link>
 
         <h1 className="mt-3 text-3xl font-semibold sm:text-4xl">{topic.title}</h1>
-        {topic.summary && <p className="mt-2 max-w-2xl text-ink-muted">{topic.summary}</p>}
+        {topic.summary && (
+          <p className="mt-2 max-w-2xl text-ink-muted">
+            <RichInline content={topic.summary} />
+          </p>
+        )}
       </header>
 
       <TopicVisual topic={topic} />

@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '../components/ui/Button.jsx';
 import { Card, CardHeader } from '../components/ui/Card.jsx';
 import { Loading, Notice } from '../components/ui/Feedback.jsx';
+import { RichInline } from '../components/ui/RichText.jsx';
 import { api } from '../lib/api.js';
 import { useResource } from '../lib/useResource.js';
 import { formatMinutes } from '../lib/format.js';
@@ -154,7 +155,9 @@ export default function GoalSetup() {
                   <div className="min-w-0 flex-1">
                     <h3 className="text-[0.9375rem] font-semibold text-ink">{topic.title}</h3>
                     {topic.summary && (
-                      <p className="mt-0.5 text-sm leading-relaxed text-ink-muted">{topic.summary}</p>
+                      <p className="mt-0.5 text-sm leading-relaxed text-ink-muted">
+                        <RichInline content={topic.summary} />
+                      </p>
                     )}
                     {topic.prerequisites.length > 0 && (
                       <p className="mt-1.5 text-xs text-ink-muted">

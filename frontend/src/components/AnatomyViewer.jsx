@@ -14,7 +14,7 @@ const AnatomyCanvas = lazy(() => import('./AnatomyCanvas.jsx'));
  * plan is what people came for. Nothing is fetched until the student asks,
  * which keeps the plan quick to open on a phone.
  */
-export function AnatomyViewer({ systemKey, topicTitle }) {
+export function AnatomyViewer({ systemKey, topicTitle, className = '' }) {
   const [open, setOpen] = useState(false);
   const system = getAnatomySystem(systemKey);
   const url = anatomyModelUrl(systemKey);
@@ -22,7 +22,11 @@ export function AnatomyViewer({ systemKey, topicTitle }) {
   if (!system || !url) return null;
 
   return (
-    <div className="mt-4 overflow-hidden rounded-2xl border border-line bg-surface">
+    <div
+      className={['overflow-hidden rounded-2xl border border-line bg-surface', className]
+        .filter(Boolean)
+        .join(' ')}
+    >
       <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
         <div className="min-w-0">
           <p className="eyebrow">See it in 3D</p>

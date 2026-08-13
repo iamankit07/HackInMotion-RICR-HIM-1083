@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { Button } from '../components/ui/Button.jsx';
 import { Card, CardHeader } from '../components/ui/Card.jsx';
@@ -153,7 +153,16 @@ export default function GoalSetup() {
                   </span>
 
                   <div className="min-w-0 flex-1">
-                    <h3 className="text-[0.9375rem] font-semibold text-ink">{topic.title}</h3>
+                    {/* The topic page works before a plan exists, so the list is
+                        readable from here rather than only from the plan. */}
+                    <h3 className="text-[0.9375rem] font-semibold text-ink">
+                      <Link
+                        to={`/goals/${goalId}/explore/${topic.key}`}
+                        className="ease-lakshya underline decoration-line-strong underline-offset-4 transition duration-200 hover:text-saffron hover:decoration-saffron"
+                      >
+                        {topic.title}
+                      </Link>
+                    </h3>
                     {topic.summary && (
                       <p className="mt-0.5 text-sm leading-relaxed text-ink-muted">
                         <RichInline content={topic.summary} />

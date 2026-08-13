@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
 
 import { Button } from './ui/Button.jsx';
+import { AnatomyViewer } from './AnatomyViewer.jsx';
 import { SESSION_LABELS, SESSION_TONES, formatMinutes } from '../lib/format.js';
+import { matchAnatomySystem } from '../lib/anatomy.js';
 
 /**
  * One study session. The `reason` line is the whole point — a block of time
@@ -10,6 +12,9 @@ import { SESSION_LABELS, SESSION_TONES, formatMinutes } from '../lib/format.js';
  */
 export function SessionRow({ session, busy, onComplete, onUndo, onAsk, exploreTo }) {
   const done = session.status === 'completed';
+  // Anatomy topics get a 3D model to go with the reading. Everything else
+  // matches nothing here and the row renders exactly as it did before.
+  const anatomySystem = matchAnatomySystem(session.title, session.reason);
 
   return (
     <li
@@ -72,6 +77,10 @@ export function SessionRow({ session, busy, onComplete, onUndo, onAsk, exploreTo
           )}
         </div>
       </div>
+
+      {anatomySystem && !done && (
+        <AnatomyViewer systemKey={anatomySystem} topicTitle={session.title} />
+      )}
     </li>
   );
 }

@@ -46,7 +46,10 @@ export function SessionRow({ session, busy, onComplete, onUndo, onAsk, exploreTo
             ].join(' ')}
           >
             {exploreTo && !done ? (
-              <Link to={exploreTo} className="underline-offset-4 hover:text-saffron hover:underline">
+              <Link
+                to={exploreTo}
+                className="ease-lakshya underline decoration-line-strong underline-offset-4 transition duration-200 hover:text-saffron hover:decoration-saffron"
+              >
                 {session.title}
               </Link>
             ) : (

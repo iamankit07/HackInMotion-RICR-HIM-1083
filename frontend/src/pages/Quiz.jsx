@@ -103,7 +103,12 @@ export default function Quiz() {
                     question.selectedIndex !== question.correctIndex
                   }
                   disabled={isReviewing}
-                  onChange={() => setAnswers({ ...answers, [index]: optionIndex })}
+                  onSelect={() => setAnswers({ ...answers, [index]: optionIndex })}
+                  onClear={() => {
+                    const next = { ...answers };
+                    delete next[index];
+                    setAnswers(next);
+                  }}
                 />
               ))}
             </div>
@@ -166,7 +171,7 @@ function QuestionStatus({ question }) {
   );
 }
 
-function Option({ option, name, checked, correct, wrong, disabled, onChange }) {
+function Option({ option, name, checked, correct, wrong, disabled, onSelect, onClear }) {
   const tone = correct
     ? 'border-teal bg-teal-soft text-teal'
     : wrong
@@ -189,8 +194,18 @@ function Option({ option, name, checked, correct, wrong, disabled, onChange }) {
         type="radio"
         name={name}
         checked={checked}
-        onChange={onChange}
         disabled={disabled}
+        // A radio cannot be unchecked by clicking it, which traps a student who
+        // picked the wrong option and would rather leave the question blank than
+        // guess. Clicking the chosen answer again clears it.
+        onClick={() => (checked ? onClear() : onSelect())}
+        onKeyDown={(event) => {
+          if (event.key === ' ' && checked) {
+            event.preventDefault();
+            onClear();
+          }
+        }}
+        onChange={() => {}}
         className="mt-0.5 accent-current"
       />
       <span className="leading-relaxed">

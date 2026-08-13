@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { AuthShell } from '../components/AuthShell.jsx';
 import { Button } from '../components/ui/Button.jsx';
-import { Field, Input } from '../components/ui/Field.jsx';
+import { Field, Input, PasswordInput } from '../components/ui/Field.jsx';
 import { Notice } from '../components/ui/Feedback.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 
@@ -67,9 +67,8 @@ export default function SignIn() {
 
         <Field label="Password" error={fieldErrors.password}>
           {({ id, invalid }) => (
-            <Input
+            <PasswordInput
               id={id}
-              type="password"
               autoComplete="current-password"
               value={form.password}
               onChange={update('password')}

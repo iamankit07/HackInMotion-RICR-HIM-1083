@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/Button.jsx';
 import { Card } from '../components/ui/Card.jsx';
 import { ChoiceGroup, Field, Input, Textarea } from '../components/ui/Field.jsx';
+import { DateField } from '../components/ui/DateField.jsx';
 import { Notice } from '../components/ui/Feedback.jsx';
 import { api } from '../lib/api.js';
 import { formatMinutes } from '../lib/format.js';
@@ -120,14 +121,12 @@ export default function NewGoal() {
 
           <Field label="Deadline" error={fieldErrors.deadline}>
             {({ id, invalid }) => (
-              <Input
+              <DateField
                 id={id}
-                type="date"
                 value={form.deadline}
                 onChange={update('deadline')}
                 min={new Date().toISOString().slice(0, 10)}
                 invalid={invalid}
-                required
               />
             )}
           </Field>

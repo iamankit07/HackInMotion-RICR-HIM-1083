@@ -4,7 +4,11 @@ const VARIANTS = {
   accent:
     'bg-saffron text-white hover:-translate-y-px hover:shadow-[var(--shadow-lift)] active:translate-y-0',
   outline: 'border border-line-strong text-ink hover:border-ink hover:bg-sunk',
-  ghost: 'text-ink-soft hover:text-ink hover:bg-sunk',
+  // Ghost is the quietest button, but it still has to look like one. With no
+  // resting border or fill it reads as plain text and people only discover it
+  // by accidentally hovering, so it keeps a faint outline of its own.
+  ghost:
+    'border border-line bg-sunk/50 text-ink-soft hover:border-line-strong hover:bg-sunk hover:text-ink',
   danger: 'border border-clay/40 text-clay hover:bg-clay-soft',
 };
 

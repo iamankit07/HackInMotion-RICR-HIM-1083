@@ -22,7 +22,9 @@ export function answerQuestion({ goal, topic, weakAreas = [], history = [], ques
     system: buildSystemPrompt({ goal, topic, weakAreas }),
     messages,
     temperature: 0.6,
-    maxOutputTokens: 1200,
+    // Generous, because the model's internal reasoning is charged against this
+    // budget too and a short answer must not be squeezed out by it.
+    maxOutputTokens: 3000,
   });
 }
 

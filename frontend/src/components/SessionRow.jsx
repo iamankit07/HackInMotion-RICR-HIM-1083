@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import { Button } from './ui/Button.jsx';
 import { AnatomyViewer } from './AnatomyViewer.jsx';
@@ -11,6 +11,7 @@ import { matchAnatomySystem } from '../lib/anatomy.js';
  * timetable someone else wrote.
  */
 export function SessionRow({ session, busy, onComplete, onUndo, onAsk, exploreTo }) {
+  const location = useLocation();
   const done = session.status === 'completed';
   // Anatomy topics get a 3D model to go with the reading. Everything else
   // matches nothing here and the row renders exactly as it did before.
@@ -48,6 +49,7 @@ export function SessionRow({ session, busy, onComplete, onUndo, onAsk, exploreTo
             {exploreTo && !done ? (
               <Link
                 to={exploreTo}
+                state={{ from: location.pathname }}
                 className="ease-lakshya underline decoration-line-strong underline-offset-4 transition duration-200 hover:text-saffron hover:decoration-saffron"
               >
                 {session.title}

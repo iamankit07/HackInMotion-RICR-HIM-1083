@@ -1,18 +1,27 @@
 import { Card } from './ui/Card.jsx';
+import { AnatomyViewer } from './AnatomyViewer.jsx';
+import { matchAnatomySystem } from '../lib/anatomy.js';
 
 /**
  * The visual explanation for a topic.
  *
- * Right now this is the placeholder every topic falls back to. The interactive
- * models are being built here — anatomy first, since that is where a diagram in
- * a textbook fails hardest and a model you can rotate helps most.
+ * Anatomy is covered: a topic about the brachial plexus or the rotator cuff
+ * opens the matching body system as a model you can turn around, which is where
+ * a printed diagram fails hardest. Every other subject still falls through to
+ * the placeholder below.
  *
  * Anything added here must stay usable on a phone: the plan screens are what a
  * student opens under exam pressure, and this page cannot be the one that makes
- * the app feel heavy. Load the viewer only when this page is open, and keep this
- * fallback for topics that have no model.
+ * the app feel heavy. The renderer is a separate chunk fetched only once a
+ * student opens a model, so arriving on this page costs nothing extra.
  */
 export function TopicVisual({ topic }) {
+  const anatomySystem = matchAnatomySystem(topic.title, topic.summary);
+
+  if (anatomySystem) {
+    return <AnatomyViewer systemKey={anatomySystem} topicTitle={topic.title} />;
+  }
+
   return (
     <Card className="flex min-h-64 flex-col items-center justify-center p-8 text-center">
       <Diagram />

@@ -158,6 +158,7 @@ export default function GoalSetup() {
                     <h3 className="text-[0.9375rem] font-semibold text-ink">
                       <Link
                         to={`/goals/${goalId}/explore/${topic.key}`}
+                        state={{ from: `/goals/${goalId}/setup` }}
                         className="ease-lakshya underline decoration-line-strong underline-offset-4 transition duration-200 hover:text-saffron hover:decoration-saffron"
                       >
                         {topic.title}

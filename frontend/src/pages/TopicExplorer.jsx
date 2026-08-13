@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 
 import { Button } from '../components/ui/Button.jsx';
 import { Card } from '../components/ui/Card.jsx';
@@ -17,6 +17,7 @@ import { formatMinutes } from '../lib/format.js';
  */
 export default function TopicExplorer() {
   const { goalId, topicKey } = useParams();
+  const location = useLocation();
 
   const { data, error, loading, reload } = useResource(() => api.goals.get(goalId), [goalId]);
 
@@ -28,6 +29,12 @@ export default function TopicExplorer() {
 
   const topic = data.goal.topics.find((candidate) => candidate.key === topicKey);
   const progress = data.progress.byTopic.find((entry) => entry.topicKey === topicKey);
+  const position = data.goal.topics.findIndex((candidate) => candidate.key === topicKey) + 1;
+
+  // Whoever linked here says where "back" should go. Deep links have no such
+  // state, and the plan is the right guess for those.
+  const cameFrom = location.state?.from ?? `/goals/${goalId}/plan`;
+  const cameFromSetup = cameFrom.endsWith('/setup');
 
   if (!topic) {
     return (
@@ -40,14 +47,22 @@ export default function TopicExplorer() {
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-5">
       <header>
+        {/* Where the reader came from, so "back" does not send someone who
+            opened this from setup to a plan that does not exist yet. */}
         <Link
-          to={`/goals/${goalId}/plan`}
-          className="text-sm text-ink-muted underline-offset-4 hover:text-ink hover:underline"
+          to={cameFrom}
+          className="ease-lakshya text-sm text-ink-muted underline-offset-4 transition hover:text-ink hover:underline"
         >
-          ← Back to the plan
+          ← Back to {cameFromSetup ? 'setting up' : 'the plan'}
         </Link>
 
-        <h1 className="mt-3 text-3xl font-semibold sm:text-4xl">{topic.title}</h1>
+        {/* Every other screen names itself in an eyebrow; without one there is
+            nothing telling you which goal this topic belongs to. */}
+        <p className="eyebrow mt-3">
+          {data.goal.subject} · Topic {position > 0 ? `${position} of ${data.goal.topics.length}` : ''}
+        </p>
+
+        <h1 className="mt-1.5 text-3xl font-semibold sm:text-4xl">{topic.title}</h1>
         {topic.summary && (
           <p className="mt-2 max-w-2xl text-ink-muted">
             <RichInline content={topic.summary} />

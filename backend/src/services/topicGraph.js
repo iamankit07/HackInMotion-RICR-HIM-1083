@@ -71,7 +71,7 @@ export async function buildTopicGraph(goal) {
     schema: responseSchema,
     responseSchema: RESPONSE_SCHEMA,
     temperature: 0.3,
-    maxOutputTokens: 4096,
+    maxOutputTokens: 8192,
   });
 
   return sanitise(topics.slice(0, MAX_TOPICS));

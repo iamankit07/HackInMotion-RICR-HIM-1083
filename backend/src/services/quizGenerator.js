@@ -73,7 +73,7 @@ export async function generateDiagnosticQuiz(goal, { questionCount = 8 } = {}) {
     schema: responseSchema,
     responseSchema: RESPONSE_SCHEMA,
     temperature: 0.5,
-    maxOutputTokens: 4096,
+    maxOutputTokens: 8192,
   });
 
   return sanitiseQuestions(questions, goal.topics);
@@ -101,7 +101,7 @@ export async function generateMockTest(goal, topics, { questionCount = 8 } = {})
     schema: responseSchema,
     responseSchema: RESPONSE_SCHEMA,
     temperature: 0.7,
-    maxOutputTokens: 4096,
+    maxOutputTokens: 8192,
   });
 
   return sanitiseQuestions(questions, topics);

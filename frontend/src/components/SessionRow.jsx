@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 import { Button } from './ui/Button.jsx';
 import { SESSION_LABELS, SESSION_TONES, formatMinutes } from '../lib/format.js';
 
@@ -6,7 +8,7 @@ import { SESSION_LABELS, SESSION_TONES, formatMinutes } from '../lib/format.js';
  * with an explanation attached is a plan, the same block without one is a
  * timetable someone else wrote.
  */
-export function SessionRow({ session, busy, onComplete, onUndo, onAsk }) {
+export function SessionRow({ session, busy, onComplete, onUndo, onAsk, exploreTo }) {
   const done = session.status === 'completed';
 
   return (
@@ -38,7 +40,13 @@ export function SessionRow({ session, busy, onComplete, onUndo, onAsk }) {
               done ? 'text-ink-muted line-through' : 'text-ink',
             ].join(' ')}
           >
-            {session.title}
+            {exploreTo && !done ? (
+              <Link to={exploreTo} className="underline-offset-4 hover:text-saffron hover:underline">
+                {session.title}
+              </Link>
+            ) : (
+              session.title
+            )}
           </h3>
 
           {session.reason && !done && (

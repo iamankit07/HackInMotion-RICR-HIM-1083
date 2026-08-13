@@ -11,7 +11,9 @@ const envSchema = z.object({
   JWT_EXPIRES_IN: z.string().default('7d'),
 
   GEMINI_API_KEY: z.string().optional(),
-  GEMINI_MODEL: z.string().default('gemini-2.5-flash'),
+  // An alias Google keeps pointing at the current flash model, so this does not
+  // need changing every time a numbered version is retired.
+  GEMINI_MODEL: z.string().default('gemini-flash-latest'),
 
   GROQ_API_KEY: z.string().optional(),
   GROQ_MODEL: z.string().default('llama-3.3-70b-versatile'),

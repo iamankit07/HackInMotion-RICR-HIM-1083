@@ -6,104 +6,205 @@ const API_ROOT = 'https://generativelanguage.googleapis.com/v1beta';
 const TIMEOUT_MS = 45_000;
 const RETRIES = 2;
 
-// Model names change between Gemini releases. Rather than hard-coding one and
-// breaking the day it is retired, we verify the configured model on first use
-// and fall back to whatever flash-tier model the account can actually see.
-let resolvedModel = null;
+// How many alternatives to try before giving up and letting the fallback
+// provider take over.
+const MAX_MODEL_ATTEMPTS = 4;
+
+// Models that exist but cannot answer a text prompt: image, speech, embedding,
+// music and the specialised agent models.
+const NOT_TEXT_MODELS =
+  /(image|tts|audio|embedding|vision|robotics|computer-use|nano-banana|lyria|antigravity|deep-research)/;
+
+/**
+ * The model that answered last. Google retires models on its own schedule — a
+ * name that worked last month can start returning 404 with "no longer available
+ * to new users" — so the working model is discovered at runtime and remembered,
+ * rather than being a constant we have to chase.
+ */
+let workingModel = null;
+
+/**
+ * Newer Gemini models reason internally before answering, and those thinking
+ * tokens are billed against maxOutputTokens — so a generous-looking budget can
+ * be swallowed entirely by thinking, leaving an empty answer. Asking for the
+ * shallowest thinking keeps replies fast and leaves room for the actual output.
+ *
+ * Not every model accepts the option, so support is learned on first use and
+ * the request is retried without it rather than failing.
+ */
+let supportsThinkingLevel = null;
 
 export const gemini = {
   name: 'gemini',
 
   isConfigured: () => Boolean(env.GEMINI_API_KEY),
 
-  async generate({ system, messages, temperature = 0.7, maxOutputTokens = 4096, responseSchema }) {
-    const model = await resolveModel();
+  async generate(request) {
+    const preferred = workingModel ?? env.GEMINI_MODEL;
 
-    const generationConfig = { temperature, maxOutputTokens };
+    try {
+      const answer = await callModel(preferred, request);
+      workingModel = preferred;
+      return answer;
+    } catch (error) {
+      if (!isModelUnavailable(error)) {
+        throw error;
+      }
 
-    if (responseSchema) {
-      // Gemini validates the shape server-side, so we get parseable JSON back
-      // instead of prose wrapped in code fences.
-      generationConfig.responseMimeType = 'application/json';
-      generationConfig.responseSchema = responseSchema;
+      console.warn(`Gemini model "${preferred}" is not available to this key. Finding a replacement.`);
+      return generateWithFirstWorkingModel(request, preferred);
     }
-
-    const payload = {
-      contents: messages.map((message) => ({
-        role: message.role === 'assistant' ? 'model' : 'user',
-        parts: [{ text: message.content }],
-      })),
-      generationConfig,
-    };
-
-    if (system) {
-      payload.systemInstruction = { parts: [{ text: system }] };
-    }
-
-    const response = await postJson(`${API_ROOT}/models/${model}:generateContent`, {
-      headers: { 'x-goog-api-key': env.GEMINI_API_KEY },
-      body: payload,
-      timeoutMs: TIMEOUT_MS,
-      retries: RETRIES,
-      provider: 'gemini',
-    });
-
-    return readCandidate(response);
   },
 };
 
-async function resolveModel() {
-  if (resolvedModel) {
-    return resolvedModel;
+async function callModel(model, request) {
+  if (supportsThinkingLevel === false) {
+    return send(model, request, false);
   }
 
-  const preferred = env.GEMINI_MODEL;
-
   try {
-    await getJson(`${API_ROOT}/models/${preferred}`, {
-      headers: { 'x-goog-api-key': env.GEMINI_API_KEY },
-      timeoutMs: 10_000,
-      provider: 'gemini',
-    });
-
-    resolvedModel = preferred;
-    return resolvedModel;
+    const answer = await send(model, request, true);
+    supportsThinkingLevel = true;
+    return answer;
   } catch (error) {
-    if (error.status !== 404 && error.status !== 400) {
+    if (supportsThinkingLevel !== null || !isUnsupportedOption(error)) {
       throw error;
+    }
+
+    supportsThinkingLevel = false;
+    console.warn('Gemini does not accept a thinking level on this model. Continuing without it.');
+
+    return send(model, request, false);
+  }
+}
+
+async function send(
+  model,
+  { system, messages, temperature = 0.7, maxOutputTokens = 8192, responseSchema },
+  withThinkingLevel,
+) {
+  const generationConfig = { temperature, maxOutputTokens };
+
+  if (withThinkingLevel) {
+    generationConfig.thinkingConfig = { thinkingLevel: 'low' };
+  }
+
+  if (responseSchema) {
+    // Gemini validates the shape server-side, so we get parseable JSON back
+    // instead of prose wrapped in code fences.
+    generationConfig.responseMimeType = 'application/json';
+    generationConfig.responseSchema = responseSchema;
+  }
+
+  const payload = {
+    contents: messages.map((message) => ({
+      role: message.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: message.content }],
+    })),
+    generationConfig,
+  };
+
+  if (system) {
+    payload.systemInstruction = { parts: [{ text: system }] };
+  }
+
+  const response = await postJson(`${API_ROOT}/models/${model}:generateContent`, {
+    headers: { 'x-goog-api-key': env.GEMINI_API_KEY },
+    body: payload,
+    timeoutMs: TIMEOUT_MS,
+    retries: RETRIES,
+    provider: 'gemini',
+  });
+
+  return readCandidate(response);
+}
+
+const isUnsupportedOption = (error) =>
+  error?.status === 400 && /invalid argument|unknown name|not supported/i.test(error.message);
+
+/**
+ * Walks the account's actual model list, best candidate first, and sends the
+ * real request to each until one answers. Listing alone is not enough to decide
+ * — retired models are still listed, and only refuse once you call them — so
+ * the request itself is the test. A success costs nothing extra.
+ */
+async function generateWithFirstWorkingModel(request, alreadyTried) {
+  const candidates = (await listTextModels()).filter((model) => model !== alreadyTried);
+
+  if (candidates.length === 0) {
+    throw new AiError('This Gemini key has no usable text model', { provider: 'gemini' });
+  }
+
+  let lastError;
+
+  for (const model of candidates.slice(0, MAX_MODEL_ATTEMPTS)) {
+    try {
+      const answer = await callModel(model, request);
+
+      workingModel = model;
+      console.log(`Gemini is now using "${model}".`);
+
+      return answer;
+    } catch (error) {
+      if (!isModelUnavailable(error)) {
+        throw error;
+      }
+
+      lastError = error;
     }
   }
 
-  console.warn(`Gemini model "${preferred}" is unavailable. Looking for an alternative.`);
-  resolvedModel = await pickAvailableModel();
-  console.log(`Using Gemini model "${resolvedModel}".`);
-
-  return resolvedModel;
+  throw lastError ?? new AiError('No Gemini model accepted the request', { provider: 'gemini' });
 }
 
-async function pickAvailableModel() {
+async function listTextModels() {
   const { models = [] } = await getJson(`${API_ROOT}/models?pageSize=200`, {
     headers: { 'x-goog-api-key': env.GEMINI_API_KEY },
     timeoutMs: 10_000,
     provider: 'gemini',
   });
 
-  const usable = models
+  return models
     .filter((model) => model.supportedGenerationMethods?.includes('generateContent'))
     .map((model) => model.name.replace(/^models\//, ''))
-    .filter((name) => !name.includes('vision') && !name.includes('embedding'));
+    .filter((name) => !NOT_TEXT_MODELS.test(name))
+    .sort(byPreference);
+}
 
-  // Flash models are the cheap, fast tier and the reason we picked Gemini.
-  const flash = usable.find((name) => name.includes('flash'));
-  const chosen = flash ?? usable[0];
+/**
+ * Prefer the aliases Google maintains ("...-latest"), then flash models over
+ * pro ones because they are the cheap tier this project is built around, then
+ * the highest version number available.
+ */
+function byPreference(a, b) {
+  const score = (name) =>
+    (name.endsWith('-latest') ? 100 : 0) +
+    (name.includes('flash') ? 50 : 0) +
+    (name.includes('preview') ? -10 : 0) +
+    versionOf(name);
 
-  if (!chosen) {
-    throw new AiError('This Gemini key has no usable text generation models', {
-      provider: 'gemini',
-    });
+  return score(b) - score(a);
+}
+
+function versionOf(name) {
+  const match = name.match(/(\d+(?:\.\d+)?)/);
+  return match ? Number(match[1]) : 0;
+}
+
+/**
+ * Distinguishes "this model is gone" from a genuine outage or a bad request.
+ * Only the former is worth retrying against a different model.
+ */
+function isModelUnavailable(error) {
+  if (error?.provider !== 'gemini') {
+    return false;
   }
 
-  return chosen;
+  if (error.status === 404) {
+    return true;
+  }
+
+  return error.status === 400 && /model|not found|not supported/i.test(error.message);
 }
 
 function readCandidate(response) {
@@ -118,25 +219,28 @@ function readCandidate(response) {
     );
   }
 
-  if (candidate.finishReason === 'MAX_TOKENS') {
-    throw new AiError('Gemini hit the output limit before finishing', {
-      provider: 'gemini',
-      retryable: false,
-    });
-  }
-
   const text = candidate.content?.parts?.map((part) => part.text ?? '').join('').trim();
 
-  if (!text) {
-    throw new AiError(`Gemini returned an empty response (${candidate.finishReason ?? 'no reason'})`, {
-      provider: 'gemini',
-    });
+  // A truncated explanation is still worth reading, so partial text is returned
+  // rather than thrown away. Truncated JSON fails to parse a moment later and
+  // the fallback provider picks it up, which is the behaviour we want there.
+  if (text) {
+    return text;
   }
 
-  return text;
+  if (candidate.finishReason === 'MAX_TOKENS') {
+    throw new AiError(
+      'Gemini used its whole token budget thinking and produced no answer',
+      { provider: 'gemini' },
+    );
+  }
+
+  throw new AiError(`Gemini returned an empty response (${candidate.finishReason ?? 'no reason'})`, {
+    provider: 'gemini',
+  });
 }
 
-// Exposed for tests and for forcing re-resolution after a configuration change.
+/** Forces the next request to rediscover a model. Used by tests. */
 export function resetModelCache() {
-  resolvedModel = null;
+  workingModel = null;
 }

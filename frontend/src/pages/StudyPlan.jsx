@@ -180,6 +180,9 @@ export default function StudyPlan() {
                   busy={busy === session.id}
                   onComplete={() => setSessionStatus(session.id, 'completed')}
                   onUndo={() => setSessionStatus(session.id, 'pending')}
+                  exploreTo={
+                    session.kind === 'test' ? null : `/goals/${goalId}/explore/${session.topicKey}`
+                  }
                   onAsk={() =>
                     navigate(`/goals/${goalId}/tutor`, { state: { topicKey: session.topicKey } })
                   }

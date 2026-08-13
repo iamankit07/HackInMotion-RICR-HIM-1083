@@ -12,6 +12,7 @@ import NewGoal from './pages/NewGoal.jsx';
 import GoalSetup from './pages/GoalSetup.jsx';
 import Quiz from './pages/Quiz.jsx';
 import StudyPlan from './pages/StudyPlan.jsx';
+import TopicExplorer from './pages/TopicExplorer.jsx';
 import Tutor from './pages/Tutor.jsx';
 import NotFound from './pages/NotFound.jsx';
 
@@ -28,6 +29,7 @@ export default function App() {
         <Route path="/goals/:goalId/setup" element={<GoalSetup />} />
         <Route path="/goals/:goalId/quiz/:assessmentId" element={<Quiz />} />
         <Route path="/goals/:goalId/plan" element={<StudyPlan />} />
+        <Route path="/goals/:goalId/explore/:topicKey" element={<TopicExplorer />} />
         <Route path="/goals/:goalId/tutor" element={<Tutor />} />
       </Route>
 

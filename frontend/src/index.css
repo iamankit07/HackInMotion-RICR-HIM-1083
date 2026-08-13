@@ -131,6 +131,16 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23g)' opacity='0.28'/%3E%3C/svg%3E");
   }
 
+  /*
+    A canvas advertises its own intrinsic size (300x150 until something resizes
+    it). Inside a grid or flex item that becomes a floor on how narrow the
+    column may get, which pushes the whole page sideways on a phone. Letting it
+    shrink keeps the 3D panels inside their card.
+  */
+  canvas {
+    max-width: 100%;
+  }
+
   h1,
   h2,
   h3 {

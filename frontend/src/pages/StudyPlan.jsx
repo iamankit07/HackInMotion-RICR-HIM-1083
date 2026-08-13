@@ -137,7 +137,9 @@ export default function StudyPlan() {
           </dl>
         </Card>
 
-        <Card className="p-6">
+        {/* min-w-0: a grid item will not shrink below its content by default,
+            so a wide child (the 3D panel) would widen the whole page. */}
+        <Card className="min-w-0 p-6">
           <CardHeader
             eyebrow={formatWeekday(today.data.date)}
             title={sessions.length > 0 ? 'What to study today' : 'Nothing scheduled today'}

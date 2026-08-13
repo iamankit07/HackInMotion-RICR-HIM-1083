@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 import { Button } from '../components/ui/Button.jsx';
 import { Card } from '../components/ui/Card.jsx';
@@ -10,7 +10,6 @@ import { useResource } from '../lib/useResource.js';
 
 export default function Quiz() {
   const { goalId, assessmentId } = useParams();
-  const navigate = useNavigate();
 
   const { data, error, loading, reload } = useResource(
     () => api.assessments.get(goalId, assessmentId),

@@ -45,12 +45,6 @@ export function DateField({ id, value, onChange, min, max, invalid, className = 
     return new Date(now.getFullYear(), now.getMonth(), now.getDate());
   }, []);
 
-  // Reopening on a different value should land on that month, not the last one.
-  useEffect(() => {
-    if (open && selected) setCursor(selected);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
-
   useEffect(() => {
     if (!open) return undefined;
 
@@ -70,6 +64,23 @@ export function DateField({ id, value, onChange, min, max, invalid, className = 
   }, [open]);
 
   const outOfRange = (date) => (minDate && date < minDate) || (maxDate && date > maxDate);
+
+  /** Opening lands on the chosen date's month rather than wherever it was last. */
+  const openCalendar = () => {
+    if (selected) setCursor(selected);
+    setOpen(true);
+  };
+
+  /**
+   * Touching the field should show the calendar without having to find the
+   * icon. Only on pointer devices though: a phone opens its own date wheel on
+   * tap, and ours underneath it means two pickers fighting over one field.
+   */
+  const openIfPointerDevice = () => {
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      openCalendar();
+    }
+  };
 
   const pick = (date) => {
     onChange({ target: { value: toISO(date) } });
@@ -93,6 +104,8 @@ export function DateField({ id, value, onChange, min, max, invalid, className = 
         onChange={onChange}
         min={min}
         max={max}
+        onFocus={openIfPointerDevice}
+        onClick={openIfPointerDevice}
         className={[
           'ease-lakshya w-full rounded-xl border bg-surface px-3.5 py-2.5 pr-11 text-sm text-ink transition',
           'focus:outline-none focus:ring-2 focus:ring-saffron/30',
@@ -103,7 +116,7 @@ export function DateField({ id, value, onChange, min, max, invalid, className = 
 
       <button
         type="button"
-        onClick={() => setOpen((shown) => !shown)}
+        onClick={() => (open ? setOpen(false) : openCalendar())}
         aria-label={open ? 'Close calendar' : 'Open calendar'}
         aria-expanded={open}
         tabIndex={-1}

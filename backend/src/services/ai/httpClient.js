@@ -1,14 +1,23 @@
 import { AiError } from './errors.js';
 
 // Statuses worth trying again: rate limits, gateway hiccups, provider overload.
-const RETRYABLE_STATUSES = new Set([408, 425, 429, 500, 502, 503, 504]);
+export const RETRYABLE_STATUSES = new Set([408, 425, 429, 500, 502, 503, 504]);
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Exponential backoff with jitter, so parallel requests do not all retry in step.
 const backoffDelay = (attempt) => 2 ** (attempt - 1) * 600 + Math.random() * 400;
 
-export async function postJson(url, { headers = {}, body, timeoutMs, retries, provider }) {
+/**
+ * `retryOn` lets a provider opt out of retrying a status that retrying cannot
+ * fix. Gemini uses this for 429: its free-tier quota is counted per model, so
+ * waiting and asking the same model again only burns what is left, while
+ * switching model recovers a whole fresh allowance.
+ */
+export async function postJson(
+  url,
+  { headers = {}, body, timeoutMs, retries, provider, retryOn = RETRYABLE_STATUSES },
+) {
   let lastError;
 
   for (let attempt = 0; attempt <= retries; attempt += 1) {
@@ -34,7 +43,7 @@ export async function postJson(url, { headers = {}, body, timeoutMs, retries, pr
       lastError = new AiError(`${provider} responded ${response.status} — ${await readError(response)}`, {
         provider,
         status: response.status,
-        retryable: RETRYABLE_STATUSES.has(response.status),
+        retryable: retryOn.has(response.status),
       });
 
       if (!lastError.retryable) {

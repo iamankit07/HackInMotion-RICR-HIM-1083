@@ -10,12 +10,18 @@
     <title>Lakshya — know what to study next</title>
 
     <script>
+      // Applies a saved theme before the first paint, so the page never flashes
+      // one theme and snaps to the other. With no saved choice nothing is set,
+      // and the stylesheet's own light default and prefers-color-scheme rule
+      // take over — which is why there is no fallback branch here.
       (function () {
         try {
           var stored = localStorage.getItem('lakshya-theme');
-          document.documentElement.dataset.theme = stored === 'light' ? 'light' : 'dark';
+          if (stored === 'light' || stored === 'dark') {
+            document.documentElement.dataset.theme = stored;
+          }
         } catch (e) {
-          document.documentElement.dataset.theme = 'dark';
+          /* localStorage blocked — the stylesheet default is correct anyway */
         }
       })();
     </script>

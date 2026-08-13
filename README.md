@@ -91,7 +91,7 @@ Keeping the schedule out of the language model is a deliberate engineering decis
 
 ### AI Provider: which, why, and how
 
-**Chosen: Google Gemini API (`gemini-2.5-flash`), with Groq as an automatic fallback.**
+**Chosen: Google Gemini API (`gemini-flash-latest`), with Groq as an automatic fallback.**
 
 We compared the options available to a student team with no budget:
 
@@ -108,10 +108,28 @@ schema server-side**, so topic graphs and quiz questions come back as valid, cor
 instead of prose we'd have to parse defensively. Second, its free tier is workable for a live demo
 without a credit card.
 
-Groq exists in the stack because a hackathon demo cannot afford a single point of failure. Every AI
-call goes through one provider-agnostic module; if Gemini errors or rate-limits, the same request is
-retried against Groq automatically, and only if both fail does the app fall back to a cached or
-degraded response.
+Groq exists in the stack because a demo cannot afford a single point of failure. Every AI call goes
+through one provider-agnostic module; if Gemini errors or runs out of quota, the same request is
+sent to Groq automatically, and only if both fail does the app degrade rather than break.
+
+### What the free tier actually costs us
+
+Being honest about the limits, because they shaped the design:
+
+- Gemini's free tier allows roughly **20 generations per day per model**. One student going through
+  the whole flow — topic graph, diagnostic, plan, mock test — spends about four of them.
+- That allowance is counted **per model**, not per key. So when one model is spent, moving to
+  another recovers a full fresh allowance.
+
+Two things follow from this, and both are in the code rather than in a warning we hope someone
+reads. A `429` is treated as "this model is finished for today" and moves straight to the next
+model, instead of being retried — retrying only spends what is left. And `gemini-flash-latest` is
+an alias Google repoints as models are retired, so the default does not go stale. We found that
+the hard way: `gemini-2.5-flash` began answering `404 — no longer available to new users` partway
+through development.
+
+For anything beyond a demo this would need a paid tier. The architecture does not change; only the
+limits do.
 
 Full integration details, prompt design and failure handling: [`docs/ai-integration.md`](docs/ai-integration.md).
 

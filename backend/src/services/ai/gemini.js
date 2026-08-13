@@ -1,6 +1,6 @@
 import { env } from '../../config/env.js';
 import { AiError } from './errors.js';
-import { getJson, postJson } from './httpClient.js';
+import { RETRYABLE_STATUSES, getJson, postJson } from './httpClient.js';
 
 const API_ROOT = 'https://generativelanguage.googleapis.com/v1beta';
 const TIMEOUT_MS = 45_000;
@@ -8,7 +8,18 @@ const RETRIES = 2;
 
 // How many alternatives to try before giving up and letting the fallback
 // provider take over.
-const MAX_MODEL_ATTEMPTS = 4;
+const MAX_MODEL_ATTEMPTS = 5;
+
+/**
+ * Everything the shared client retries, except 429.
+ *
+ * The free tier allows a fixed number of requests per day *per model*, so a 429
+ * means this model is finished for today — waiting will not bring it back, and
+ * every retry spends part of whatever allowance is left. Switching model is the
+ * only thing that recovers capacity, so a 429 is handed straight to the model
+ * fallback instead of being retried.
+ */
+const GEMINI_RETRY_STATUSES = new Set([...RETRYABLE_STATUSES].filter((status) => status !== 429));
 
 // Models that exist but cannot answer a text prompt: image, speech, embedding,
 // music and the specialised agent models.
@@ -47,11 +58,11 @@ export const gemini = {
       workingModel = preferred;
       return answer;
     } catch (error) {
-      if (!isModelUnavailable(error)) {
+      if (!shouldTryAnotherModel(error)) {
         throw error;
       }
 
-      console.warn(`Gemini model "${preferred}" is not available to this key. Finding a replacement.`);
+      console.warn(`Gemini model "${preferred}" ${describe(error)}. Trying another model.`);
       return generateWithFirstWorkingModel(request, preferred);
     }
   },
@@ -113,6 +124,7 @@ async function send(
     body: payload,
     timeoutMs: TIMEOUT_MS,
     retries: RETRIES,
+    retryOn: GEMINI_RETRY_STATUSES,
     provider: 'gemini',
   });
 
@@ -192,20 +204,29 @@ function versionOf(name) {
 }
 
 /**
- * Distinguishes "this model is gone" from a genuine outage or a bad request.
- * Only the former is worth retrying against a different model.
+ * Whether a different model could succeed where this one did not.
+ *
+ *   404  the model has been retired for this account
+ *   429  its daily free-tier allowance is spent, and the allowance is per model
+ *   400  the model rejected the shape of the request
+ *
+ * Everything else — a timeout, an outage, a malformed prompt — would fail the
+ * same way on any model, so it is raised and the fallback provider takes over.
  */
-function isModelUnavailable(error) {
+function shouldTryAnotherModel(error) {
   if (error?.provider !== 'gemini') {
     return false;
   }
 
-  if (error.status === 404) {
+  if (error.status === 404 || error.status === 429) {
     return true;
   }
 
   return error.status === 400 && /model|not found|not supported/i.test(error.message);
 }
+
+const describe = (error) =>
+  error.status === 429 ? 'has used its daily quota' : 'is not available to this key';
 
 function readCandidate(response) {
   const candidate = response.candidates?.[0];

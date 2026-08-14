@@ -50,6 +50,13 @@ export default function StudyPlan() {
   const sessions = withPartNumbers(today.data.sessions);
   const subject = goal.data?.goal?.subject ?? 'Your plan';
 
+  // The scheduler reports what it could not fit. Show the titles rather than the
+  // slugs, and fall back to the slug if the topic list has moved on since.
+  const topics = goal.data?.goal?.topics ?? [];
+  const unscheduled = (summary.unscheduledTopicKeys ?? []).map(
+    (key) => topics.find((topic) => topic.key === key)?.title ?? key,
+  );
+
   // Achievements included: ticking off a session is exactly the moment a streak
   // or a badge changes, and it would be odd to have to reload to see it.
   const refresh = () =>
@@ -131,6 +138,33 @@ export default function StudyPlan() {
         </Notice>
       )}
 
+      {summary.totalSessions === 0 && (
+        <Notice
+          tone="warn"
+          title="Nothing fits in the time you have left"
+          onRetry={() => navigate(`/goals/${goalId}/setup`)}
+          retryLabel="Change the goal"
+        >
+          <p>
+            {summary.daysRemaining === 0
+              ? 'The deadline is today, so there are no study days left to plan into.'
+              : `There is not enough time before the deadline to fit any of these topics — ${summary.daysRemaining} ${summary.daysRemaining === 1 ? 'day' : 'days'} left at the hours you set.`}{' '}
+            Push the deadline back, raise your daily hours, or cut the topic list down to what
+            matters most.
+          </p>
+        </Notice>
+      )}
+
+      {unscheduled.length > 0 && summary.totalSessions > 0 && (
+        <Notice tone="warn" title={`${unscheduled.length} ${unscheduled.length === 1 ? 'topic' : 'topics'} would not fit`}>
+          <p>
+            Everything else has been scheduled, but there was no room for{' '}
+            <strong>{unscheduled.join(', ')}</strong>. Give yourself more days or more hours a day
+            and rebuild, or accept that these are the ones to drop.
+          </p>
+        </Notice>
+      )}
+
       {summary.isBehind && !today.data.autoRebuilt && (
         <Notice
           tone="warn"
@@ -191,7 +225,9 @@ export default function StudyPlan() {
 
           {sessions.length === 0 ? (
             <p className="mt-4 text-sm text-ink-muted">
-              A rest day, or everything for today is already ticked off. Either is fine.
+              {summary.totalSessions === 0
+                ? 'There is nothing in this plan yet — see the note above.'
+                : 'A rest day, or everything for today is already ticked off. Either is fine.'}
             </p>
           ) : (
             <ul className="mt-4 flex flex-col gap-2.5">

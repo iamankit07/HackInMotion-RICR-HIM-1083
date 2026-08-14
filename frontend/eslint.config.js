@@ -53,11 +53,13 @@ export default [
     },
   },
 
-  // Build scripts run in Node, not the browser.
+  // Build and audit scripts run in Node — but the Playwright ones also carry
+  // functions that are shipped into a page and run there, so they legitimately
+  // reference both sets of globals in one file.
   {
     files: ['scripts/**/*.{js,mjs}', '*.config.js'],
     languageOptions: {
-      globals: globals.node,
+      globals: { ...globals.node, ...globals.browser },
     },
   },
 

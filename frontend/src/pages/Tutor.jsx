@@ -256,7 +256,7 @@ function MicButton({ listening, onStart, onStop }) {
       className={[
         'ease-lakshya flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border transition duration-200',
         listening
-          ? 'border-saffron bg-saffron text-white'
+          ? 'border-saffron bg-saffron text-on-accent'
           : 'border-line text-ink-soft hover:border-line-strong hover:bg-sunk hover:text-ink',
       ].join(' ')}
     >

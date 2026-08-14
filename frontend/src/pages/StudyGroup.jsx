@@ -96,7 +96,7 @@ export default function StudyGroup() {
               <span
                 className={[
                   'flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold tabular-nums',
-                  member.rank === 1 ? 'bg-saffron text-white' : 'bg-sunk text-ink-soft',
+                  member.rank === 1 ? 'bg-saffron text-on-accent' : 'bg-sunk text-ink-soft',
                 ].join(' ')}
               >
                 {member.rank}

@@ -181,7 +181,7 @@ export function DateField({ id, value, onChange, min, max, invalid, className = 
                   className={[
                     'ease-lakshya flex h-9 items-center justify-center rounded-lg text-sm tabular-nums transition duration-150',
                     disabled && 'cursor-not-allowed text-ink-muted/40',
-                    !disabled && isSelected && 'bg-saffron font-semibold text-white',
+                    !disabled && isSelected && 'bg-saffron font-semibold text-on-accent',
                     !disabled && !isSelected && isToday && 'border border-saffron/50 text-ink hover:bg-sunk',
                     !disabled && !isSelected && !isToday && 'text-ink-soft hover:bg-sunk hover:text-ink',
                   ]

@@ -2,7 +2,7 @@ const VARIANTS = {
   primary:
     'bg-ink text-paper hover:-translate-y-px hover:shadow-[var(--shadow-lift)] active:translate-y-0',
   accent:
-    'bg-saffron text-white hover:-translate-y-px hover:shadow-[var(--shadow-lift)] active:translate-y-0',
+    'bg-saffron text-on-accent hover:-translate-y-px hover:shadow-[var(--shadow-lift)] active:translate-y-0',
   outline: 'border border-line-strong text-ink hover:border-ink hover:bg-sunk',
   // Ghost is the quietest button, but it still has to look like one. With no
   // resting border or fill it reads as plain text and people only discover it

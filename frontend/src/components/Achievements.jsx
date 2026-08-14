@@ -58,7 +58,7 @@ export function Achievements({ achievements, compact = false }) {
                     'ease-lakshya inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition',
                     badge.earned
                       ? 'border-saffron/40 bg-saffron-soft font-medium text-saffron'
-                      : 'border-line text-ink-muted/70',
+                      : 'border-line text-ink-muted',
                   ].join(' ')}
                 >
                   <span aria-hidden="true">{badge.earned ? '●' : '○'}</span>

@@ -168,6 +168,14 @@ function AnatomyModel({ url }) {
     // common scale, which on a flat screen only Bounds was papering over. In a
     // headset the size is the whole point, so normalise to a unit box here and
     // let the caller scale that to human height.
+    //
+    // Measure from a cleared transform. React runs this effect twice on mount
+    // in development, and the second pass would otherwise measure a model we
+    // had already resized, read it as a unit box, and undo the first pass.
+    root.current.scale.setScalar(1);
+    root.current.position.set(0, 0, 0);
+    root.current.updateMatrixWorld(true);
+
     const box = new THREE.Box3().setFromObject(root.current);
     const size = box.getSize(new THREE.Vector3());
     const factor = 1 / (Math.max(size.x, size.y, size.z) || 1);

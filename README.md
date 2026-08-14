@@ -260,7 +260,16 @@ Schema definitions and the reasoning behind them: [`docs/database-design.md`](do
 
 ## Deployment Link
 
-*Deployed once the core flow is complete — link will appear here.*
+*Live URL goes here once the services are up.*
+
+Frontend on Vercel, API on Render, database on MongoDB Atlas. The deployment is
+configured in the repository rather than clicked through a dashboard — see
+[`render.yaml`](render.yaml) and [`frontend/vercel.json`](frontend/vercel.json) —
+so it is reviewable and reproduces the same way every time.
+
+Step-by-step instructions, what is already handled in the code, the rate limits,
+and an honest account of what the free tiers will do to you are in
+[`docs/deployment.md`](docs/deployment.md).
 
 ---
 

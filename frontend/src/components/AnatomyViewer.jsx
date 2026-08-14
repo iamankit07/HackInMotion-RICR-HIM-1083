@@ -103,15 +103,17 @@ export function AnatomyViewer({ systemKey, topicTitle, className = '' }) {
 
           {/*
             The headset build is a sideload rather than a store install, so it
-            is a quiet link under the blurb. Anyone browsing on a Quest already
-            has the button above, which needs nothing installed.
+            stays the secondary option under the blurb. It was an underlined
+            phrase and read as part of the sentence above it, so it borrows the
+            ghost button's shape: quiet, but obviously a thing you press.
           */}
           <a
-            className="mt-1.5 inline-flex items-center gap-1 text-xs text-ink-soft underline decoration-line underline-offset-2 hover:text-ink"
+            className="ease-lakshya mt-2 inline-flex items-center gap-1.5 rounded-full border border-line bg-sunk/50 px-2.5 py-1 text-xs font-medium text-ink-soft transition duration-200 hover:border-line-strong hover:bg-sunk hover:text-ink"
             href={VR_APK_URL}
             rel="noreferrer noopener"
             target="_blank"
           >
+            <DownloadIcon />
             Quest headset app ({VR_APK_SIZE})
           </a>
         </div>
@@ -170,5 +172,20 @@ function LoadingPanel() {
         Loading the 3D viewer
       </div>
     </div>
+  );
+}
+
+// Says "this downloads something" before the label has to.
+function DownloadIcon() {
+  return (
+    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
   );
 }

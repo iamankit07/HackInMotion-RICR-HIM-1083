@@ -260,11 +260,11 @@ Schema definitions and the reasoning behind them: [`docs/database-design.md`](do
 
 ## Deployment Link
 
-### **[lakshya-xrsfy.vercel.app](https://lakshya-xrsfy.vercel.app)**
+### **[lakshya-study.vercel.app](https://lakshya-study.vercel.app)**
 
 | | |
 |---|---|
-| App | <https://lakshya-xrsfy.vercel.app> |
+| App | <https://lakshya-study.vercel.app> |
 | API | <https://lakshya-api-sefu.onrender.com/api> |
 | Health check | <https://lakshya-api-sefu.onrender.com/api/health> |
 

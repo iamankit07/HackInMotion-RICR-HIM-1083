@@ -110,6 +110,14 @@ export const api = {
     achievements: (goalId) => request(goalPath(goalId, '/achievements')),
   },
 
+  groups: {
+    list: () => request('/groups'),
+    create: (body) => request('/groups', { method: 'POST', body }),
+    join: (body) => request('/groups/join', { method: 'POST', body }),
+    get: (groupId) => request(`/groups/${groupId}`),
+    leave: (groupId) => request(`/groups/${groupId}/leave`, { method: 'POST' }),
+  },
+
   plan: {
     get: (goalId) => request(goalPath(goalId, '/plan')),
     create: (goalId) => request(goalPath(goalId, '/plan'), { method: 'POST' }),

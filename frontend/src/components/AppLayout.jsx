@@ -18,12 +18,15 @@ export function AppLayout() {
             <span className="select-none font-display text-xl font-semibold tracking-tight">Lakshya</span>
           </Link>
 
-          {goalId && (
-            <nav className="hidden items-center gap-1 sm:flex">
-              <Tab to={`/goals/${goalId}/plan`}>Study plan</Tab>
-              <Tab to={`/goals/${goalId}/tutor`}>Ask a doubt</Tab>
-            </nav>
-          )}
+          <nav className="hidden items-center gap-1 sm:flex">
+            {goalId && (
+              <>
+                <Tab to={`/goals/${goalId}/plan`}>Study plan</Tab>
+                <Tab to={`/goals/${goalId}/tutor`}>Ask a doubt</Tab>
+              </>
+            )}
+            <Tab to="/groups">Groups</Tab>
+          </nav>
 
           <div className="flex items-center gap-3">
             <ThemeToggle />
@@ -34,12 +37,15 @@ export function AppLayout() {
           </div>
         </div>
 
-        {goalId && (
-          <nav className="flex gap-1 border-t border-line px-4 py-2 sm:hidden">
-            <Tab to={`/goals/${goalId}/plan`}>Study plan</Tab>
-            <Tab to={`/goals/${goalId}/tutor`}>Ask a doubt</Tab>
-          </nav>
-        )}
+        <nav className="flex gap-1 overflow-x-auto border-t border-line px-4 py-2 sm:hidden">
+          {goalId && (
+            <>
+              <Tab to={`/goals/${goalId}/plan`}>Study plan</Tab>
+              <Tab to={`/goals/${goalId}/tutor`}>Ask a doubt</Tab>
+            </>
+          )}
+          <Tab to="/groups">Groups</Tab>
+        </nav>
       </header>
 
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">

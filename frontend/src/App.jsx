@@ -26,6 +26,8 @@ const Quiz = lazy(() => import('./pages/Quiz.jsx'));
 const StudyPlan = lazy(() => import('./pages/StudyPlan.jsx'));
 const TopicExplorer = lazy(() => import('./pages/TopicExplorer.jsx'));
 const Tutor = lazy(() => import('./pages/Tutor.jsx'));
+const StudyGroups = lazy(() => import('./pages/StudyGroups.jsx'));
+const StudyGroup = lazy(() => import('./pages/StudyGroup.jsx'));
 const NotFound = lazy(() => import('./pages/NotFound.jsx'));
 
 export default function App() {
@@ -51,6 +53,8 @@ function AppRoutes() {
         <Route path="/goals/:goalId/plan" element={<StudyPlan />} />
         <Route path="/goals/:goalId/explore/:topicKey" element={<TopicExplorer />} />
         <Route path="/goals/:goalId/tutor" element={<Tutor />} />
+        <Route path="/groups" element={<StudyGroups />} />
+        <Route path="/groups/:groupId" element={<StudyGroup />} />
       </Route>
 
       <Route path="*" element={<NotFound />} />

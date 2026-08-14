@@ -141,6 +141,37 @@
     max-width: 100%;
   }
 
+  /*
+    Tailwind's reset follows the HTML spec and leaves buttons on the default
+    arrow, so nothing in the app looked clickable. Put the hand back.
+  */
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  label,
+  summary,
+  select {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [aria-disabled='true'] {
+    cursor: not-allowed;
+  }
+
+  /*
+    Dragging across a button caret-selects its label and shows a text cursor
+    over what is plainly a control. Body copy and the study notes stay
+    selectable — students need to be able to copy those.
+  */
+  button,
+  [role='button'],
+  label,
+  nav,
+  .eyebrow {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
   h1,
   h2,
   h3 {

@@ -38,6 +38,13 @@ export function SessionRow({ session, busy, onComplete, onUndo, onAsk, exploreTo
             <span className="text-xs tabular-nums text-ink-muted">
               {formatMinutes(session.minutes)}
             </span>
+            {session.partCount > 1 && (
+              // A long topic is split across sittings rather than run as one
+              // block, so say which sitting this is.
+              <span className="rounded-full bg-sunk px-2 py-0.5 text-[0.6875rem] text-ink-muted">
+                part {session.part} of {session.partCount}
+              </span>
+            )}
           </div>
 
           <h3
@@ -83,7 +90,8 @@ export function SessionRow({ session, busy, onComplete, onUndo, onAsk, exploreTo
         </div>
       </div>
 
-      {anatomySystem && !done && (
+      {/* One model per topic, not one per sitting. */}
+      {anatomySystem && !done && (session.part ?? 1) === 1 && (
         <AnatomyViewer systemKey={anatomySystem} topicTitle={session.title} className="mt-4" />
       )}
     </li>

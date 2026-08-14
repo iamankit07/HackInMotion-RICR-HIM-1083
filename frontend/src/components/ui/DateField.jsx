@@ -120,10 +120,12 @@ export function DateField({ id, value, onChange, min, max, invalid, className = 
         aria-label={open ? 'Close calendar' : 'Open calendar'}
         aria-expanded={open}
         tabIndex={-1}
+        // Same reasoning as the password eye: no fill of its own, so it reads as
+        // part of the field rather than a box placed inside it.
         className={[
-          'ease-lakshya absolute right-1 top-1/2 flex h-8 w-9 -translate-y-1/2 items-center justify-center',
-          'rounded-lg transition hover:bg-sunk',
-          open ? 'bg-sunk text-saffron' : 'text-ink-muted hover:text-ink',
+          'ease-lakshya absolute right-2.5 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center',
+          'rounded-md bg-transparent transition duration-200',
+          open ? 'text-saffron' : 'text-ink-muted hover:text-saffron',
         ].join(' ')}
       >
         <CalendarIcon />

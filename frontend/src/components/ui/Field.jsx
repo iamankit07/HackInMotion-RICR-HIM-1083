@@ -65,7 +65,10 @@ export function PasswordInput({ invalid, className = '', ...props }) {
         // Not in the tab order: someone tabbing from the password field expects
         // the submit button next, not a toggle.
         tabIndex={-1}
-        className="ease-lakshya absolute right-1 top-1/2 flex h-8 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-ink-muted transition hover:bg-sunk hover:text-ink"
+        // No background of its own. Filling it on hover painted a differently
+        // coloured, differently rounded rectangle inside the field, which read
+        // as a separate box sitting on top rather than part of the input.
+        className="ease-lakshya absolute right-2.5 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-md bg-transparent text-ink-muted transition duration-200 hover:text-saffron focus-visible:outline-none"
       >
         {visible ? <EyeOffIcon /> : <EyeIcon />}
       </button>

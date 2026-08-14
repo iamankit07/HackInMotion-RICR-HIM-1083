@@ -159,6 +159,22 @@
   }
 
   /*
+    Inside a form, `cursor: auto` on the wrappers resolves to a text caret over
+    anything the browser considers text — so the I-beam appeared in the gaps
+    around a field, as though the box were bigger than it looks. Only the field
+    itself should offer to type into.
+  */
+  form,
+  fieldset {
+    cursor: default;
+  }
+
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([disabled]),
+  textarea:not([disabled]) {
+    cursor: text;
+  }
+
+  /*
     Dragging across a button caret-selects its label and shows a text cursor
     over what is plainly a control. Body copy and the study notes stay
     selectable — students need to be able to copy those.

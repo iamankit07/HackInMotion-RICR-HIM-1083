@@ -99,6 +99,15 @@ function buildPrompt(goal, { days, totalMinutes, targetCount }) {
     `Keep the total of estimatedMinutes near ${totalMinutes} minutes so the plan is realistic.`,
     'Only list a prerequisite when the topic is genuinely impossible to follow without it.',
     'Prerequisites must never form a loop.',
+    '',
+    // Students read these titles and summaries on every screen, so they have to
+    // sound like a person wrote them rather than like generated filler.
+    'How to word the titles and summaries:',
+    '- Name topics the way a syllabus or a student would. Not "An Introduction to X".',
+    '- Summaries are one plain sentence saying what the topic covers.',
+    '- Never join two clauses with a dash. Use a full stop or a comma.',
+    '- No "not just X, but Y" phrasing, and no colons in titles.',
+    '- Skip comprehensive, crucial, essential, fundamental, delve, robust and seamless.',
   ];
 
   return lines.filter(Boolean).join('\n');

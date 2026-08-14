@@ -113,7 +113,20 @@ export default function StudyPlan() {
         <Notice title="That did not work">{actionError.message}</Notice>
       )}
 
-      {summary.isBehind && (
+      {today.data.autoRebuilt && (
+        <Notice
+          tone="info"
+          title={`Your plan has been rebuilt around what is left`}
+        >
+          <p>
+            {today.data.autoRebuilt.missedSessions} sessions slipped past, so the remaining work has
+            been refitted into the {summary.daysRemaining} days you have left. Everything you had
+            already finished still counts.
+          </p>
+        </Notice>
+      )}
+
+      {summary.isBehind && !today.data.autoRebuilt && (
         <Notice
           tone="warn"
           title={`${summary.missedSessions} ${summary.missedSessions === 1 ? 'session has' : 'sessions have'} slipped past`}

@@ -7,6 +7,10 @@ import { ApiError } from '../utils/ApiError.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { isSameDay, startOfDay } from '../utils/dates.js';
 
+// One slipped session is a bad day, not a broken plan — a student who misses
+// one evening does not need their whole schedule rearranged underneath them.
+const MISSED_SESSIONS_BEFORE_REBUILD = 2;
+
 export const createPlan = asyncHandler(async (req, res) => {
   if (req.goal.topics.length === 0) {
     throw ApiError.badRequest(
@@ -89,10 +93,17 @@ export const listPlanVersions = asyncHandler(async (req, res) => {
  * stand, and whether the plan has drifted out of date.
  */
 export const getToday = asyncHandler(async (req, res) => {
-  const plan = await currentPlanFor(req.goal);
+  let plan = await currentPlanFor(req.goal);
 
   if (!plan) {
     throw ApiError.notFound('No study plan has been built for this goal yet.');
+  }
+
+  // Adaptive re-planning, the half a student never asks for: falling behind
+  // reshapes the schedule on its own, the moment they next open the plan.
+  const rebuilt = await rebuildIfBehind(req.goal, plan);
+  if (rebuilt) {
+    plan = rebuilt;
   }
 
   const today = startOfDay(new Date());
@@ -106,11 +117,38 @@ export const getToday = asyncHandler(async (req, res) => {
       date: today,
       sessions,
       overdue,
+      // Set only on the request that actually rebuilt, so the interface can say
+      // what happened instead of the schedule silently changing under them.
+      autoRebuilt: rebuilt ? { missedSessions: rebuilt.rebuiltAfterMissing } : null,
       summary: summarisePlan(plan, req.goal),
       progress: await summariseProgress(req.goal),
     },
   });
 });
+
+/**
+ * Rebuilds the schedule when work has been left behind, at most once a day.
+ *
+ * Without the daily guard this would rebuild on every page load while a student
+ * is behind — churning versions, and moving the plan under them mid-session.
+ * One rebuild a day is enough for the schedule to keep up with reality.
+ */
+async function rebuildIfBehind(goal, plan) {
+  const missed = countMissedSessions(plan);
+
+  if (missed < MISSED_SESSIONS_BEFORE_REBUILD) {
+    return null;
+  }
+
+  if (plan.createdAt && isSameDay(plan.createdAt, new Date())) {
+    return null;
+  }
+
+  const rebuilt = await buildPlanForGoal(goal, { reason: 'behind-schedule' });
+  rebuilt.rebuiltAfterMissing = missed;
+
+  return rebuilt;
+}
 
 export const updateSession = asyncHandler(async (req, res) => {
   const plan = await currentPlanFor(req.goal);

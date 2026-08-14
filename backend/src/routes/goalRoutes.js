@@ -38,6 +38,7 @@ import {
 
 import { authenticate } from '../middleware/authenticate.js';
 import { loadGoal } from '../middleware/loadGoal.js';
+import { aiLimiter } from '../middleware/rateLimits.js';
 import { validate } from '../middleware/validate.js';
 
 import { createGoalSchema, manualTopicsSchema, updateGoalSchema } from '../validators/goalValidators.js';
@@ -70,9 +71,9 @@ scoped
   .patch(validate({ body: updateGoalSchema }), updateGoal)
   .delete(deleteGoal);
 
-scoped.post('/topics/generate', generateTopics);
+scoped.post('/topics/generate', aiLimiter, generateTopics);
 scoped.put('/topics', validate({ body: manualTopicsSchema }), setTopics);
-scoped.get('/topics/:topicKey/notes', getTopicNotes);
+scoped.get('/topics/:topicKey/notes', aiLimiter, getTopicNotes);
 scoped.get('/achievements', getAchievements);
 
 scoped.route('/plan').get(getPlan).post(createPlan);
@@ -83,8 +84,8 @@ scoped.get('/today', getToday);
 scoped.patch('/sessions/:sessionId', validate({ body: updateSessionSchema }), updateSession);
 
 scoped.get('/assessments', listAssessments);
-scoped.post('/assessments/diagnostic', validate({ body: createQuizSchema }), createDiagnostic);
-scoped.post('/assessments/mock', validate({ body: createQuizSchema }), createMockTest);
+scoped.post('/assessments/diagnostic', aiLimiter, validate({ body: createQuizSchema }), createDiagnostic);
+scoped.post('/assessments/mock', aiLimiter, validate({ body: createQuizSchema }), createMockTest);
 scoped.get('/assessments/:assessmentId', getAssessment);
 scoped.post(
   '/assessments/:assessmentId/submit',
@@ -93,11 +94,12 @@ scoped.post(
 );
 
 scoped.get('/conversations', listConversations);
-scoped.post('/conversations', validate({ body: askTutorSchema }), askTutor);
+scoped.post('/conversations', aiLimiter, validate({ body: askTutorSchema }), askTutor);
 scoped.get('/conversations/:conversationId', getConversation);
 scoped.delete('/conversations/:conversationId', deleteConversation);
 scoped.post(
   '/conversations/:conversationId/messages',
+  aiLimiter,
   validate({ body: askTutorSchema }),
   askTutor,
 );

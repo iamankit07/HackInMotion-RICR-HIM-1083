@@ -254,7 +254,45 @@ Schema definitions and the reasoning behind them: [`docs/database-design.md`](do
 
 ## Screenshots
 
-*Added as the interface is built.*
+### Your goals
+
+Every goal you are working towards, with days left and how far through you are.
+Search across subjects once you have more than a few.
+
+![Goals dashboard](assets/screenshots/01-dashboard.png)
+
+### The study plan
+
+Every session between now and the deadline, and where you stand on each topic.
+The mastery bars are what the scheduler reads when it decides who gets the hours:
+red topics get the time, amber ones get a shorter pass.
+
+![Study plan](assets/screenshots/02-study-plan.png)
+
+### Seeing it in 3D
+
+Anatomy topics offer the relevant system as a model you can rotate. It loads
+only when you ask for it, so the plan screens stay fast on a phone.
+
+![3D anatomy viewer](assets/screenshots/03-anatomy-3d.png)
+
+### Asking a doubt
+
+The tutor knows your subject, the topic you are on, and which topics you scored
+badly on. Pick a topic from the list to narrow it further, or ask about anything.
+
+![AI tutor in dark mode](assets/screenshots/04-tutor-dark.png)
+
+### Studying alongside other people
+
+Join with a code and compare progress. Everyone keeps their own plan — only the
+numbers are shared, never quiz answers, tutor conversations or the plan itself.
+
+![Study group leaderboard](assets/screenshots/05-study-group.png)
+
+### Signing in
+
+![Sign in](assets/screenshots/06-sign-in.png)
 
 ---
 

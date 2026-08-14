@@ -157,11 +157,28 @@
   }
 
   /*
+    An I-beam over a heading or a name badge makes it look like a field you can
+    type into. This is an app, not a document, so the arrow is the honest
+    default and the caret is put back only where text is actually entered.
+    Selection still works everywhere — only the pointer shape changes.
+  */
+  body {
+    cursor: default;
+  }
+
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='color']),
+  textarea,
+  [contenteditable='true'] {
+    cursor: text;
+  }
+
+  /*
     Tailwind's reset follows the HTML spec and leaves buttons on the default
     arrow, so nothing in the app looked clickable. Put the hand back.
   */
   button:not(:disabled),
   [role='button']:not([aria-disabled='true']),
+  a[href],
   label,
   summary,
   select {

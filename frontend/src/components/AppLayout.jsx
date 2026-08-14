@@ -35,7 +35,7 @@ export function AppLayout() {
 
           <div className="flex items-center gap-3">
             <ThemeToggle />
-            <span className="hidden text-sm text-ink-muted sm:block">{user?.name}</span>
+            <span className="hidden select-none text-sm text-ink-muted sm:block">{user?.name}</span>
             <Button variant="ghost" size="sm" onClick={signOut}>
               Sign out
             </Button>

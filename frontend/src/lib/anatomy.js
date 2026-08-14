@@ -77,3 +77,32 @@ export const anatomyModelUrl = (key) => {
   const system = ANATOMY_SYSTEMS[key];
   return system ? `/models/anatomy/${system.file}` : null;
 };
+
+/**
+ * The standalone Quest build, offered as a download beside the in-browser
+ * viewer. It is a sideload rather than a store install, so it is deliberately
+ * the secondary option: the WebXR button below needs nothing installed at all.
+ */
+export const VR_APK_URL =
+  'https://github.com/iamankit07/HackInMotion-RICR-HIM-1083/releases/download/vr-v1/VR_Human_Anatomy.apk';
+
+export const VR_APK_SIZE = '407 MB';
+
+/**
+ * Whether this browser can open an immersive session — true in the Quest
+ * browser, false on every laptop and phone the app is normally used from.
+ *
+ * Resolved once and shared, because each caller asking the headset the same
+ * question is wasted work on a device with little to spare.
+ */
+let vrSupport = null;
+
+export function checkVrSupport() {
+  if (vrSupport) return vrSupport;
+
+  vrSupport = navigator.xr?.isSessionSupported
+    ? navigator.xr.isSessionSupported('immersive-vr').catch(() => false)
+    : Promise.resolve(false);
+
+  return vrSupport;
+}

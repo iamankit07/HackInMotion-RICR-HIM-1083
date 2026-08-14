@@ -1,6 +1,12 @@
-import { Suspense, lazy, useEffect, useId, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useId, useState } from 'react';
 
-import { anatomyModelUrl, getAnatomySystem } from '../lib/anatomy.js';
+import {
+  anatomyModelUrl,
+  checkVrSupport,
+  getAnatomySystem,
+  VR_APK_SIZE,
+  VR_APK_URL,
+} from '../lib/anatomy.js';
 import { Button } from './ui/Button.jsx';
 
 // three.js and its loaders are far larger than the rest of the app put
@@ -38,6 +44,33 @@ export function AnatomyViewer({ systemKey, topicTitle, className = '' }) {
   const id = useId();
   const [open, setOpen] = useState(false);
 
+  // Only the Quest browser answers yes, so on a laptop the VR button is never
+  // rendered at all rather than offered and then failing.
+  const [vrSupported, setVrSupported] = useState(false);
+  const [vrRequested, setVrRequested] = useState(false);
+  const [vrActive, setVrActive] = useState(false);
+  const [vrError, setVrError] = useState('');
+
+  useEffect(() => {
+    let alive = true;
+    checkVrSupport().then((supported) => alive && setVrSupported(supported));
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const handleVrChange = useCallback((active, error) => {
+    setVrActive(active);
+    if (!active) setVrRequested(false);
+    setVrError(error ? 'The headset would not open the model. Try again.' : '');
+  }, []);
+
+  const enterVr = () => {
+    setVrError('');
+    claimViewer(id); // the canvas has to exist before a session can use it
+    setVrRequested(true);
+  };
+
   // Follow whichever viewer currently holds the slot, and give it up on unmount
   // so navigating away does not leave a context claimed by a dead component.
   useEffect(() => {
@@ -67,25 +100,60 @@ export function AnatomyViewer({ systemKey, topicTitle, className = '' }) {
           <p className="eyebrow">See it in 3D</p>
           <p className="mt-0.5 text-sm font-medium text-ink">{system.label}</p>
           <p className="text-xs leading-relaxed text-ink-muted">{system.blurb}</p>
+
+          {/*
+            The headset build is a sideload rather than a store install, so it
+            is a quiet link under the blurb. Anyone browsing on a Quest already
+            has the button above, which needs nothing installed.
+          */}
+          <a
+            className="mt-1.5 inline-flex items-center gap-1 text-xs text-ink-soft underline decoration-line underline-offset-2 hover:text-ink"
+            href={VR_APK_URL}
+            rel="noreferrer noopener"
+            target="_blank"
+          >
+            Quest headset app ({VR_APK_SIZE})
+          </a>
         </div>
 
-        <Button
-          variant={open ? 'outline' : 'accent'}
-          size="sm"
-          onClick={() => (open ? releaseViewer(id) : claimViewer(id))}
-        >
-          {open ? 'Hide model' : 'Open model'}
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            variant={open ? 'outline' : 'accent'}
+            size="sm"
+            onClick={() => (open ? releaseViewer(id) : claimViewer(id))}
+          >
+            {open ? 'Hide model' : 'Open model'}
+          </Button>
+
+          {vrSupported && (
+            <Button variant="accent" size="sm" onClick={enterVr} disabled={vrRequested && !vrActive}>
+              {vrActive ? 'In VR' : vrRequested ? 'Opening…' : 'View in VR'}
+            </Button>
+          )}
+        </div>
       </div>
+
+      {vrError && (
+        <p className="px-4 pb-3 text-xs text-clay" role="alert">
+          {vrError}
+        </p>
+      )}
 
       {open && (
         <div className="relative h-[22rem] w-full border-t border-line bg-sunk sm:h-[28rem]">
           <Suspense fallback={<LoadingPanel />}>
-            <AnatomyCanvas url={url} />
+            <AnatomyCanvas
+              url={url}
+              vrRequested={vrRequested}
+              vrActive={vrActive}
+              onVrChange={handleVrChange}
+            />
           </Suspense>
 
           <p className="pointer-events-none absolute bottom-2 left-0 right-0 text-center text-[0.6875rem] text-ink-muted">
-            Drag to rotate · scroll or pinch to zoom
+            {vrActive
+              ? 'Look around. Take the headset off or press the menu button to come back.'
+              : 'Drag to rotate · scroll or pinch to zoom'}
             {topicTitle ? ` · ${topicTitle}` : ''}
           </p>
         </div>

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!--
+    The Logo component's mark, redrawn for a 16px tab.
+
+    Two changes from the on-screen version, both forced by the size: the
+    strokes are roughly half again as thick, because the original 1.3 lands on
+    less than one device pixel and renders as grey mush, and the colours are
+    literal rather than var(--ink), because a favicon is fetched on its own and
+    never sees the stylesheet. The media query below is how it still follows
+    the reader's theme.
+  -->
+  <style>
+    .ink { stroke: #1f1a16; }
+    .pip { fill: #a54c0c; }
+    @media (prefers-color-scheme: dark) {
+      .ink { stroke: #f6efe5; }
+      .pip { fill: #ef8b3d; }
+    }
+  </style>
+
+  <circle class="ink" cx="16" cy="16" r="14" fill="none" stroke-width="2.4" />
+  <circle class="ink" cx="16" cy="16" r="9.2" fill="none" stroke-width="2" opacity="0.5" />
+  <circle class="pip" cx="16" cy="16" r="4.8" />
+  <path class="ink" d="M16 16 L26.5 5.5" fill="none" stroke-width="2.6" stroke-linecap="round" />
+  <path
+    class="ink"
+    d="M21.6 5.2 L26.9 5.1 L26.8 10.4"
+    fill="none"
+    stroke-width="2.6"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>

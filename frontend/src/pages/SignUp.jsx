@@ -37,7 +37,7 @@ export default function SignUp() {
   return (
     <AuthShell
       title="Start with what you actually know"
-      subtitle="Two minutes to set up, and the plan builds itself around your answers."
+      subtitle="Takes two minutes, then the plan builds itself around your answers."
       footer={
         <>
           Already have an account?{' '}

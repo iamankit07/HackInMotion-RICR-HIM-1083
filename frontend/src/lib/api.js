@@ -62,7 +62,7 @@ async function request(path, { method = 'GET', body, signal } = {}) {
       throw error;
     }
 
-    throw new ApiError('We could not reach the server. Check your connection and try again.', 0);
+    throw new ApiError("We couldn't reach the server. Check your connection and try again.", 0);
   }
 
   if (response.status === 204) {

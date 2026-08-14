@@ -28,7 +28,7 @@ export default function Dashboard() {
   if (loading) return <Loading label="Loading your goals" />;
 
   if (error) {
-    return <Notice title="We could not load your goals" onRetry={reload}>{error.message}</Notice>;
+    return <Notice title="We couldn't load your goals" onRetry={reload}>{error.message}</Notice>;
   }
 
   const goals = data?.goals ?? [];
@@ -66,7 +66,7 @@ export default function Dashboard() {
             </Link>
           }
         >
-          Tell Lakshya what you are preparing for and how long you have. It will work out the rest.
+          Tell Lakshya what you&rsquo;re preparing for and how long you&rsquo;ve got. It&rsquo;ll work out the rest.
         </EmptyState>
       ) : matches.length === 0 ? (
         <EmptyState
@@ -129,7 +129,7 @@ function GoalSearch({ value, onChange, resultCount, total }) {
           type="search"
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          placeholder="Search your goals — subject, exam, or a topic"
+          placeholder="Search by subject, exam, or topic"
           aria-label="Search your goals"
           className={[
             'ease-lakshya w-full rounded-xl border border-line bg-surface py-2.5 pl-10 pr-10 text-sm text-ink transition',
@@ -208,7 +208,7 @@ function GoalCard({ goal }) {
             tone={remaining <= 3 ? 'text-clay' : undefined}
           />
           <Stat label="Per day" value={`${goal.dailyMinutes} min`} />
-          <Stat label="Topics" value={goal.topics?.length || '—'} />
+          <Stat label="Topics" value={goal.topics?.length || 'None yet'} />
         </dl>
       </Card>
     </li>

@@ -24,7 +24,7 @@ export default function Quiz() {
   if (loading) return <Loading label="Getting your questions ready" />;
 
   if (error) {
-    return <Notice title="We could not load this test" onRetry={reload}>{error.message}</Notice>;
+    return <Notice title="We couldn't load this test" onRetry={reload}>{error.message}</Notice>;
   }
 
   const assessment = result?.assessment ?? data.assessment;
@@ -64,14 +64,14 @@ export default function Quiz() {
 
         {!isReviewing && (
           <p className="mt-2 text-ink-muted">
-            {total} questions. Answer what you can — a wrong answer here saves you an hour later.
+            {total} questions. Answer what you can. A wrong answer here saves you an hour later.
           </p>
         )}
       </header>
 
       {isReviewing && <ResultBanner result={result} assessment={assessment} goalId={goalId} />}
 
-      {submitError && <Notice title="We could not submit that">{submitError.message}</Notice>}
+      {submitError && <Notice title="We couldn't submit that">{submitError.message}</Notice>}
 
       <ol className="flex flex-col gap-4">
         {assessment.questions.map((question, index) => (

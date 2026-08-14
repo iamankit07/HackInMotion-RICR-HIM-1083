@@ -24,7 +24,7 @@ export default function StudyGroups() {
   if (groups.loading || goals.loading) return <Loading label="Loading your groups" />;
 
   if (groups.error) {
-    return <Notice title="We could not load your groups" onRetry={groups.reload}>{groups.error.message}</Notice>;
+    return <Notice title="We couldn't load your groups" onRetry={groups.reload}>{groups.error.message}</Notice>;
   }
 
   const myGoals = goals.data?.goals ?? [];
@@ -65,9 +65,9 @@ export default function StudyGroups() {
           {mode === 'join' && <JoinGroup goals={myGoals} onDone={done} onCancel={() => setMode(null)} />}
 
           {list.length === 0 && !mode ? (
-            <EmptyState title="You are not in a group yet">
+            <EmptyState title="You're not in a group yet">
               Start one and share the code, or type in a code someone sent you. Everyone keeps their
-              own plan — you just get to see how each other is doing.
+              own plan. You just get to see how everyone else is doing.
             </EmptyState>
           ) : (
             <ul className="grid gap-4 sm:grid-cols-2">
@@ -125,7 +125,7 @@ function CreateGroup({ goals, onDone, onCancel }) {
       <CardHeader eyebrow="New group" title="Start a group" />
 
       <form onSubmit={submit} className="mt-4 flex flex-col gap-4" noValidate>
-        {error && <Notice title="We could not start that group">{error.message}</Notice>}
+        {error && <Notice title="We couldn't start that group">{error.message}</Notice>}
 
         <Field label="What is the group called?">
           {({ id }) => (
@@ -172,7 +172,7 @@ function JoinGroup({ goals, onDone, onCancel }) {
       <CardHeader eyebrow="Join" title="Join with a code" />
 
       <form onSubmit={submit} className="mt-4 flex flex-col gap-4" noValidate>
-        {error && <Notice title="We could not join that group">{error.message}</Notice>}
+        {error && <Notice title="We couldn't join that group">{error.message}</Notice>}
 
         <Field label="Join code" hint="Six letters and numbers, from whoever invited you.">
           {({ id }) => (

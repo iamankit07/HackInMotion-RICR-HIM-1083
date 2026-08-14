@@ -39,15 +39,15 @@ export function AuthShell({ title, subtitle, children, footer }) {
             already knew.”
           </p>
           <footer className="mt-4 text-sm text-ink-muted">
-            The problem Lakshya exists to solve.
+            This is the problem we built Lakshya to fix.
           </footer>
         </blockquote>
 
         <ul className="relative z-10 mt-10 space-y-3.5 text-sm text-ink-soft">
           {[
-            'A diagnostic that finds your weak spots before you waste time',
+            'A quick test that finds your weak spots before you waste time on them',
             'A day-by-day plan that fits the hours you actually have',
-            'A tutor that knows what you are studying right now',
+            "A tutor that already knows what you're studying today",
           ].map((line) => (
             <li key={line} className="flex gap-3">
               <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-saffron" />

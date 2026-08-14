@@ -28,7 +28,7 @@ export default function StudyGroup() {
 
   if (error) {
     return (
-      <Notice title="We could not open that group" onRetry={reload}>
+      <Notice title="We couldn't open that group" onRetry={reload}>
         {error.message}
       </Notice>
     );
@@ -74,7 +74,7 @@ export default function StudyGroup() {
       <Card className="flex flex-wrap items-center justify-between gap-4 p-5">
         <div>
           <p className="text-sm font-medium text-ink">Invite someone</p>
-          <p className="mt-0.5 text-sm text-ink-muted">Share this code — they enter it under “Join with a code”.</p>
+          <p className="mt-0.5 text-sm text-ink-muted">Share this code. They enter it under “Join with a code”.</p>
         </div>
 
         <div className="flex items-center gap-2">

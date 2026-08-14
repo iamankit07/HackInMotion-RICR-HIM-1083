@@ -51,14 +51,14 @@ export function TopicNotes({ goalId, topic }) {
       <p className="eyebrow">Study notes</p>
       <h2 className="mt-1.5 text-lg font-semibold text-ink">Nothing written for this topic yet</h2>
       <p className="mt-1.5 max-w-lg text-sm leading-relaxed text-ink-muted">
-        Lakshya can write the notes for {topic.title} — what it covers, where the marks are, the
-        mistakes people make, and a few questions to test yourself with. It is kept afterwards, so
+        Lakshya can write up {topic.title} for you: what it covers, where the marks are, the
+        mistakes people make, and a few questions to test yourself with. We keep them after that, so
         this only takes a moment once.
       </p>
 
       {error && (
         <div className="mt-4">
-          <Notice title="We could not write these notes" onRetry={write}>
+          <Notice title="We couldn't write these notes" onRetry={write}>
             {error.message}
           </Notice>
         </div>

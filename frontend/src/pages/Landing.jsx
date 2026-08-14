@@ -7,23 +7,23 @@ import { ThemeToggle } from '../components/ThemeToggle.jsx';
 const STEPS = [
   {
     n: '01',
-    title: 'Tell it what you are up against',
-    body: 'The subject, the date, and how many hours a day you honestly have. Not how many you wish you had.',
+    title: "Tell it what you're up against",
+    body: 'The subject, the date, and how many hours a day you actually have. Not how many you wish you had.',
   },
   {
     n: '02',
     title: 'Take a short diagnostic',
-    body: 'Eight questions across the syllabus. It is looking for the gaps, not marking you.',
+    body: "Eight questions across the syllabus. It's looking for your gaps, not marking you.",
   },
   {
     n: '03',
     title: 'Get a plan that admits the truth',
-    body: 'Weak topics get the time. Topics you already know get a refresh. Everything fits the days left.',
+    body: 'Your weak topics get the hours. The ones you already know just get a quick refresh.',
   },
   {
     n: '04',
     title: 'Fall behind, and it rebuilds',
-    body: 'Miss a session or fail a re-test and the schedule reshapes around what is left.',
+    body: "Miss a few sessions and the schedule reshapes itself around whatever's left.",
   },
 ];
 
@@ -61,9 +61,8 @@ export default function Landing() {
         </h1>
 
         <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-soft">
-          Lakshya works out what you actually understand, then builds a day-by-day plan around the
-          gaps and the hours you genuinely have left. Not a to-do list. A plan that changes when you
-          do.
+          Lakshya works out what you already understand, then builds a day-by-day plan around your
+          gaps and the hours you actually have left. It&rsquo;s not a to-do list. It changes as you do.
         </p>
 
         <div className="mt-9 flex flex-wrap items-center gap-3">
@@ -77,9 +76,9 @@ export default function Landing() {
 
         <dl className="mt-16 grid max-w-2xl grid-cols-2 gap-x-8 gap-y-6 border-t border-line pt-8 sm:grid-cols-3">
           {[
-            ['Diagnostic first', 'The plan starts from evidence, not a guess'],
-            ['Prerequisite aware', 'Nothing is scheduled before what it depends on'],
-            ['Spaced revision', 'Earlier topics come back before you forget them'],
+            ['Diagnostic first', 'Your plan starts from what you scored, not a guess'],
+            ['Prerequisite aware', 'Nothing gets scheduled before the topic it depends on'],
+            ['Spaced revision', 'Old topics come back around before you forget them'],
           ].map(([term, detail]) => (
             <div key={term}>
               <dt className="font-display text-base font-semibold text-ink">{term}</dt>
@@ -111,7 +110,7 @@ export default function Landing() {
 
       <footer className="grain-free mx-auto max-w-6xl px-5 py-10 text-sm text-ink-muted sm:px-8">
         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-8">
-          <span>Lakshya — built for HackInMotion 2026</span>
+          <span>Lakshya, built for HackInMotion 2026</span>
           <span>Team RICR-HIM-1083</span>
         </div>
       </footer>

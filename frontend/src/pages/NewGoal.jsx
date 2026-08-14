@@ -82,7 +82,7 @@ export default function NewGoal() {
           What are you preparing for?
         </h1>
         <p className="mt-2.5 text-ink-muted">
-          Be honest about the time. A plan built on hours you do not have is worse than no plan.
+          Be honest about the time. A plan built on hours you don&rsquo;t have is worse than no plan at all.
         </p>
       </header>
 

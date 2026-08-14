@@ -43,7 +43,7 @@ export default function StudyPlan() {
   }
 
   if (today.error) {
-    return <Notice title="We could not open your plan" onRetry={today.reload}>{today.error.message}</Notice>;
+    return <Notice title="We couldn't open your plan" onRetry={today.reload}>{today.error.message}</Notice>;
   }
 
   const { summary, progress, overdue } = today.data;
@@ -128,11 +128,11 @@ export default function StudyPlan() {
       {today.data.autoRebuilt && (
         <Notice
           tone="info"
-          title={`Your plan has been rebuilt around what is left`}
+          title="We rebuilt your plan around what is left"
         >
           <p>
             {today.data.autoRebuilt.missedSessions} sessions slipped past, so the remaining work has
-            been refitted into the {summary.daysRemaining} days you have left. Everything you had
+            been refitted into your remaining {summary.daysRemaining} days. Everything you had
             already finished still counts.
           </p>
         </Notice>
@@ -170,11 +170,11 @@ export default function StudyPlan() {
           tone="warn"
           title={`${summary.missedSessions} ${summary.missedSessions === 1 ? 'session has' : 'sessions have'} slipped past`}
           onRetry={rebuild}
-          retryLabel="Rebuild around what is left"
+          retryLabel="Rebuild it around what is left"
         >
           <p>
-            Nothing is lost — rebuilding will fit the remaining work into the {summary.daysRemaining}{' '}
-            days you have left, and credit everything you have already done.
+            Nothing is lost. Rebuilding fits whatever is left into your remaining{' '}
+            {summary.daysRemaining} days, and everything you have already finished still counts.
           </p>
         </Notice>
       )}
@@ -226,8 +226,8 @@ export default function StudyPlan() {
           {sessions.length === 0 ? (
             <p className="mt-4 text-sm text-ink-muted">
               {summary.totalSessions === 0
-                ? 'There is nothing in this plan yet — see the note above.'
-                : 'A rest day, or everything for today is already ticked off. Either is fine.'}
+                ? "There's nothing in this plan yet. Have a look at the note above."
+                : "Either it's a rest day, or you've already ticked everything off. Both are fine."}
             </p>
           ) : (
             <ul className="mt-4 flex flex-col gap-2.5">

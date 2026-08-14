@@ -120,7 +120,7 @@ export function QuickDoubt() {
           <div className="flex-1 overflow-y-auto px-4 py-4">
             {messages.length === 0 ? (
               <p className="text-sm leading-relaxed text-ink-muted">
-                No goal, no setup — just the question. Ask about anything you are stuck on and it
+                No goal, no setup. Just ask whatever you&rsquo;re stuck on and it
                 gets answered here.
               </p>
             ) : (

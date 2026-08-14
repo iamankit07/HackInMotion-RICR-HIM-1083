@@ -110,6 +110,13 @@ export const api = {
     achievements: (goalId) => request(goalPath(goalId, '/achievements')),
   },
 
+  doubts: {
+    list: () => request('/doubts'),
+    ask: (question) => request('/doubts', { method: 'POST', body: { question } }),
+    reply: (conversationId, question) =>
+      request(`/doubts/${conversationId}/messages`, { method: 'POST', body: { question } }),
+  },
+
   groups: {
     list: () => request('/groups'),
     create: (body) => request('/groups', { method: 'POST', body }),

@@ -18,7 +18,9 @@ const messageSchema = new mongoose.Schema(
 const conversationSchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
-    goal: { type: mongoose.Schema.Types.ObjectId, ref: 'Goal', required: true, index: true },
+    // Null for a one-off doubt asked from the dashboard. Not every question a
+    // student has belongs to a syllabus they have set up.
+    goal: { type: mongoose.Schema.Types.ObjectId, ref: 'Goal', default: null, index: true },
 
     title: { type: String, default: 'New conversation', trim: true, maxlength: 120 },
     messages: { type: [messageSchema], default: [] },

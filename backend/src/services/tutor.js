@@ -29,6 +29,24 @@ export function answerQuestion({ goal, topic, weakAreas = [], history = [], ques
 }
 
 function buildSystemPrompt({ goal, topic, weakAreas }) {
+  // A doubt asked from the dashboard has no syllabus behind it — someone
+  // stuck on one thing, who should get an answer rather than a setup form.
+  if (!goal) {
+    return [
+      'You are a patient tutor answering a single question from a student.',
+      'They have not told you what they are studying, so do not assume a syllabus or a level.',
+      '',
+      'How to answer:',
+      '- Answer the question directly, then explain it.',
+      '- Judge the level from how the question is asked and match it.',
+      '- Use a concrete example wherever one exists.',
+      '- Keep it to a few short paragraphs.',
+      '- If the question is ambiguous, answer the most likely reading and say which one you took.',
+      '- Write in Unicode, not LaTeX: x² not $x^2$, √ not \\sqrt, Na⁺ not Na^+.',
+      '- If you are not certain about a fact, say so rather than inventing it.',
+    ].join('\n');
+  }
+
   const lines = [
     `You are a patient tutor helping a student prepare for ${goal.examType || goal.subject}.`,
     `The subject is ${goal.subject} and the student is at a ${goal.confidence} level.`,

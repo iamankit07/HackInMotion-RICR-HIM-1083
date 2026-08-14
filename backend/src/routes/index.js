@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import authRoutes from './authRoutes.js';
 import goalRoutes from './goalRoutes.js';
 import groupRoutes from './groupRoutes.js';
+import doubtRoutes from './doubtRoutes.js';
 import { getAiStatus } from '../services/ai/index.js';
 
 const router = Router();
@@ -24,5 +25,6 @@ router.get('/health', (req, res) => {
 router.use('/auth', authRoutes);
 router.use('/goals', goalRoutes);
 router.use('/groups', groupRoutes);
+router.use('/doubts', doubtRoutes);
 
 export default router;

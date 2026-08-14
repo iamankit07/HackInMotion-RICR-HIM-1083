@@ -7,7 +7,9 @@ export default [
   js.configs.recommended,
 
   {
-    files: ['**/*.js'],
+    // .mjs too, or the one-off scripts fall back to a browser-shaped config and
+    // every console.log is reported as undefined.
+    files: ['**/*.{js,mjs}'],
     languageOptions: {
       ecmaVersion: 2023,
       sourceType: 'module',

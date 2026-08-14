@@ -107,6 +107,7 @@ export const api = {
     setTopics: (goalId, topics) => request(goalPath(goalId, '/topics'), { method: 'PUT', body: { topics } }),
     topicNotes: (goalId, topicKey) =>
       request(goalPath(goalId, `/topics/${encodeURIComponent(topicKey)}/notes`)),
+    achievements: (goalId) => request(goalPath(goalId, '/achievements')),
   },
 
   plan: {

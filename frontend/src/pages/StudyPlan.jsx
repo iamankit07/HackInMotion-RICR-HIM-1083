@@ -6,6 +6,7 @@ import { Card, CardHeader } from '../components/ui/Card.jsx';
 import { EmptyState, Loading, Notice } from '../components/ui/Feedback.jsx';
 import { MasteryBar, ProgressRing } from '../components/ProgressRing.jsx';
 import { SessionRow } from '../components/SessionRow.jsx';
+import { Achievements } from '../components/Achievements.jsx';
 import { api } from '../lib/api.js';
 import { useResource } from '../lib/useResource.js';
 import { formatDate, formatMinutes, formatWeekday } from '../lib/format.js';
@@ -18,6 +19,7 @@ export default function StudyPlan() {
   const today = useResource(() => api.plan.today(goalId), [goalId]);
   const full = useResource(() => api.plan.get(goalId), [goalId]);
   const goal = useResource(() => api.goals.get(goalId), [goalId]);
+  const achievements = useResource(() => api.goals.achievements(goalId), [goalId]);
 
   const [busy, setBusy] = useState(null);
   const [actionError, setActionError] = useState(null);
@@ -48,7 +50,10 @@ export default function StudyPlan() {
   const sessions = withPartNumbers(today.data.sessions);
   const subject = goal.data?.goal?.subject ?? 'Your plan';
 
-  const refresh = () => Promise.all([today.reload(), full.reload(), goal.reload()]);
+  // Achievements included: ticking off a session is exactly the moment a streak
+  // or a badge changes, and it would be odd to have to reload to see it.
+  const refresh = () =>
+    Promise.all([today.reload(), full.reload(), goal.reload(), achievements.reload()]);
 
   const setSessionStatus = async (sessionId, status) => {
     setBusy(sessionId);
@@ -209,6 +214,10 @@ export default function StudyPlan() {
           )}
         </Card>
       </div>
+
+      {achievements.data?.achievements && (
+        <Achievements achievements={achievements.data.achievements} />
+      )}
 
       <div className="grid gap-4 lg:grid-cols-[1fr_20rem]">
         <Card className="p-6">

@@ -44,6 +44,8 @@ function buildSystemPrompt({ goal, topic, weakAreas }) {
       '- If the question is ambiguous, answer the most likely reading and say which one you took.',
       '- Write in Unicode, not LaTeX: x² not $x^2$, √ not \\sqrt, Na⁺ not Na^+.',
       '- If you are not certain about a fact, say so rather than inventing it.',
+      '- Never join two clauses with a dash, and skip crucial, essential and delve.',
+      '- Contractions are fine. Write it the way you would say it out loud.',
     ].join('\n');
   }
 
@@ -73,6 +75,13 @@ function buildSystemPrompt({ goal, topic, weakAreas }) {
     '- Use simple formatting: short paragraphs, and a list only when the content is genuinely a list.',
     `- If they ask about something outside ${goal.subject}, answer briefly and bring them back to what they are meant to be studying.`,
     '- If you are not certain about a fact, say so rather than inventing it.',
+    '',
+    'Sound like a person:',
+    '- Never join two clauses with a dash. Use a full stop.',
+    '- No "not just X, but Y" phrasing.',
+    '- Contractions are fine and usually better.',
+    '- Skip crucial, essential, fundamental, comprehensive, delve, robust and seamless.',
+    '- Write maths in Unicode, not LaTeX: x squared is x², a root is √.',
   );
 
   return lines.join('\n');

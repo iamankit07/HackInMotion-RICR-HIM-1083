@@ -12,7 +12,7 @@ export default function NotFound() {
       </div>
 
       <Logo size={40} />
-      <h1 className="mt-6 text-3xl font-semibold">That page is not here</h1>
+      <h1 className="mt-6 text-3xl font-semibold">That page isn&rsquo;t here</h1>
       <p className="mt-2 max-w-sm text-ink-muted">
         The link may be out of date, or the goal it pointed at has been deleted.
       </p>

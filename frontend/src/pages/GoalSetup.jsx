@@ -23,7 +23,7 @@ export default function GoalSetup() {
   if (loading) return <Loading label="Loading your goal" />;
 
   if (error) {
-    return <Notice title="We could not load this goal" onRetry={reload}>{error.message}</Notice>;
+    return <Notice title="We couldn't load this goal" onRetry={reload}>{error.message}</Notice>;
   }
 
   const { goal } = data;
@@ -96,7 +96,7 @@ export default function GoalSetup() {
 
       {actionError && (
         <Notice
-          title={actionError.isAiUnavailable ? 'The AI service is not responding' : 'That did not work'}
+          title={actionError.isAiUnavailable ? "The AI service isn't responding" : "That didn't work"}
           onRetry={actionError.isAiUnavailable ? generateTopics : undefined}
         >
           {actionError.message}
@@ -119,7 +119,7 @@ export default function GoalSetup() {
         {!hasTopics && !showManual && (
           <>
             <p className="mt-3 text-sm leading-relaxed text-ink-muted">
-              Lakshya asks the AI to split {goal.subject} into the topics you are actually examined
+              Lakshya asks the AI to split {goal.subject} into the topics you actually get examined
               on, work out what depends on what, and estimate how long each takes. You can edit the
               result or write your own list instead.
             </p>
@@ -196,7 +196,7 @@ export default function GoalSetup() {
           <CardHeader eyebrow="Step two" title="Find out where you actually stand" />
 
           <p className="mt-3 text-sm leading-relaxed text-ink-muted">
-            Eight questions across the syllabus. It is not a mark — it is how the plan learns which
+            Eight questions across the syllabus. This isn&rsquo;t a mark. It&rsquo;s how the plan works out which
             topics need the hours and which only need a look. Skip it and the plan runs on your
             self-rating alone.
           </p>

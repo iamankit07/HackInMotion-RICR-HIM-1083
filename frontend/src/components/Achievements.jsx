@@ -29,10 +29,10 @@ export function Achievements({ achievements, compact = false }) {
           </p>
           <p className="mt-1 text-xs text-ink-muted">
             {studiedToday
-              ? 'Today is counted. Come back tomorrow to keep it.'
+              ? 'Today is counted. Come back tomorrow to keep it going.'
               : currentStreak > 0
-                ? 'Study anything today to keep it alive.'
-                : 'Finish a session today to start one.'}
+                ? 'Do anything today and it carries on.'
+                : 'Finish one session today and it starts.'}
           </p>
         </div>
 
@@ -69,7 +69,7 @@ export function Achievements({ achievements, compact = false }) {
           </ul>
 
           <p className="mt-3 text-xs text-ink-muted">
-            Hover a badge you have not earned to see what it takes.
+            Hover any badge you haven&rsquo;t earned yet to see what it takes.
           </p>
         </>
       )}

@@ -352,7 +352,7 @@ function Opener({ topics, onPick }) {
     <div className="flex h-full flex-col items-center justify-center text-center">
       <h2 className="font-display text-xl font-semibold text-ink">Stuck on something?</h2>
       <p className="mt-2 max-w-sm text-sm text-ink-muted">
-        The tutor knows your subject, what you are studying today, and which topics you scored badly
+        The tutor knows your subject, what you&rsquo;re studying today, and which topics you scored badly
         on. Ask it the thing you would text a friend at midnight.
       </p>
 

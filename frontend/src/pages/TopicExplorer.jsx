@@ -25,7 +25,7 @@ export default function TopicExplorer() {
   if (loading) return <Loading label="Loading the topic" />;
 
   if (error) {
-    return <Notice title="We could not load this topic" onRetry={reload}>{error.message}</Notice>;
+    return <Notice title="We couldn't load this topic" onRetry={reload}>{error.message}</Notice>;
   }
 
   const topic = data.goal.topics.find((candidate) => candidate.key === topicKey);
@@ -39,7 +39,7 @@ export default function TopicExplorer() {
 
   if (!topic) {
     return (
-      <Notice title="That topic is not in this plan">
+      <Notice title="That topic isn't in this plan">
         <p>It may have been removed when the topic list was regenerated.</p>
       </Notice>
     );
@@ -96,14 +96,14 @@ export default function TopicExplorer() {
               </dl>
             </div>
           ) : (
-            <p className="mt-3 text-sm text-ink-muted">You have not started this one yet.</p>
+            <p className="mt-3 text-sm text-ink-muted">You haven&rsquo;t started this one yet.</p>
           )}
         </Card>
 
         <Card className="p-5">
           <p className="eyebrow">Stuck on it?</p>
           <p className="mt-3 text-sm leading-relaxed text-ink-muted">
-            The tutor already knows you are on this topic, so you can ask it directly.
+            The tutor already knows you&rsquo;re on this topic, so just ask.
           </p>
 
           <Link to={`/goals/${goalId}/tutor`} state={{ topicKey: topic.key }} className="mt-4 inline-block">

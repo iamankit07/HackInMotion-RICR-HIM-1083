@@ -95,6 +95,13 @@ export async function generateMockTest(goal, topics, { questionCount = 8 } = {})
       'Four options each, exactly one correct, and an explanation that teaches',
       'something rather than restating the answer.',
       'Mix straightforward recall with one or two that need real understanding.',
+      '',
+      // Students read these questions and explanations word for word.
+      'Word them the way a teacher would:',
+      '- Never join two clauses with a dash. Use a full stop.',
+      '- No "not just X, but Y" phrasing.',
+      '- Skip crucial, essential, fundamental, comprehensive and delve.',
+      '- Maths in Unicode, not LaTeX: x squared is x², a root is √.',
     ]
       .filter(Boolean)
       .join('\n'),

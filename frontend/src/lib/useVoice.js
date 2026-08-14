@@ -68,7 +68,7 @@ export function useVoice({ onTranscript, language = 'en-IN' } = {}) {
       } else if (event.error === 'not-allowed') {
         setError('Microphone access was blocked. Allow it in your browser settings to speak.');
       } else {
-        setError('We could not hear that. Try again, or type the question instead.');
+        setError("We couldn't hear that. Try again, or type the question instead.");
       }
       setListening(false);
     };

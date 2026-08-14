@@ -71,6 +71,16 @@ function buildSystemPrompt({ goal, topic, mastery }) {
     '- Write in Unicode, not LaTeX: x² not $x^2$, √ not \\sqrt, Na⁺ not Na^+.',
     '- Do not pad. A student mid-revision will stop reading.',
     '- If you are unsure of a fact, leave it out rather than inventing it.',
+    '',
+    // These notes are the main thing a student reads on the topic page, so they
+    // must not read as though a machine produced them.
+    'Sound like a teacher, not a generator:',
+    '- Never join two clauses with a dash. Start a new sentence.',
+    '- No "not just X, but Y" phrasing, and no other balanced contrast.',
+    '- Vary sentence length. Three sentences of the same shape in a row reads as filler.',
+    '- Contractions are fine and usually better.',
+    '- Skip comprehensive, crucial, essential, fundamental, vital, delve, robust and seamless.',
+    '- Do not open with "In this section" or close by summarising what you just said.',
   );
 
   return lines.join('\n');

@@ -260,7 +260,17 @@ Schema definitions and the reasoning behind them: [`docs/database-design.md`](do
 
 ## Deployment Link
 
-*Live URL goes here once the services are up.*
+### **[lakshya-xrsfy.vercel.app](https://lakshya-xrsfy.vercel.app)**
+
+| | |
+|---|---|
+| App | <https://lakshya-xrsfy.vercel.app> |
+| API | <https://lakshya-api-sefu.onrender.com/api> |
+| Health check | <https://lakshya-api-sefu.onrender.com/api/health> |
+
+> The API is on Render's free tier, which sleeps after 15 minutes of inactivity.
+> If the first request seems to hang, that is a cold start — give it up to a
+> minute and it will come up.
 
 Frontend on Vercel, API on Render, database on MongoDB Atlas. The deployment is
 configured in the repository rather than clicked through a dashboard — see

@@ -1,4 +1,4 @@
-import { Suspense, lazy, useState } from 'react';
+import { Suspense, lazy, useEffect, useId, useState } from 'react';
 
 import { anatomyModelUrl, getAnatomySystem } from '../lib/anatomy.js';
 import { Button } from './ui/Button.jsx';
@@ -8,6 +8,26 @@ import { Button } from './ui/Button.jsx';
 const AnatomyCanvas = lazy(() => import('./AnatomyCanvas.jsx'));
 
 /**
+ * Only one model on screen at a time.
+ *
+ * A plan can list several anatomy topics in a day, and each open viewer holds a
+ * WebGL context. Browsers allow about eight before they start force-killing the
+ * oldest, which shows up as a canvas that suddenly goes black. Opening one
+ * closes whichever was open before.
+ */
+const listeners = new Set();
+let openViewer = null;
+
+function claimViewer(id) {
+  openViewer = id;
+  listeners.forEach((notify) => notify(openViewer));
+}
+
+function releaseViewer(id) {
+  if (openViewer === id) claimViewer(null);
+}
+
+/**
  * A 3D anatomy model offered beside a study topic.
  *
  * Loading is deliberately opt-in: each model is a few megabytes, and the study
@@ -15,7 +35,22 @@ const AnatomyCanvas = lazy(() => import('./AnatomyCanvas.jsx'));
  * which keeps the plan quick to open on a phone.
  */
 export function AnatomyViewer({ systemKey, topicTitle, className = '' }) {
+  const id = useId();
   const [open, setOpen] = useState(false);
+
+  // Follow whichever viewer currently holds the slot, and give it up on unmount
+  // so navigating away does not leave a context claimed by a dead component.
+  useEffect(() => {
+    const notify = (current) => setOpen(current === id);
+
+    listeners.add(notify);
+
+    return () => {
+      listeners.delete(notify);
+      releaseViewer(id);
+    };
+  }, [id]);
+
   const system = getAnatomySystem(systemKey);
   const url = anatomyModelUrl(systemKey);
 
@@ -34,7 +69,11 @@ export function AnatomyViewer({ systemKey, topicTitle, className = '' }) {
           <p className="text-xs leading-relaxed text-ink-muted">{system.blurb}</p>
         </div>
 
-        <Button variant={open ? 'outline' : 'accent'} size="sm" onClick={() => setOpen((v) => !v)}>
+        <Button
+          variant={open ? 'outline' : 'accent'}
+          size="sm"
+          onClick={() => (open ? releaseViewer(id) : claimViewer(id))}
+        >
           {open ? 'Hide model' : 'Open model'}
         </Button>
       </div>

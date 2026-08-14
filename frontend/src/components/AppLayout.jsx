@@ -1,13 +1,17 @@
-import { Link, NavLink, Outlet, useParams } from 'react-router-dom';
+import { Link, NavLink, Outlet } from 'react-router-dom';
 
 import { useAuth } from '../context/AuthContext.jsx';
+import { useLastGoal } from '../lib/useLastGoal.js';
 import { Logo } from './Logo.jsx';
 import { Button } from './ui/Button.jsx';
 import { ThemeToggle } from './ThemeToggle.jsx';
 
 export function AppLayout() {
   const { user, signOut } = useAuth();
-  const { goalId } = useParams();
+
+  // Not useParams: Groups and the dashboard have no goal in their path, and
+  // reading it from there made the study tabs vanish the moment you left a goal.
+  const goalId = useLastGoal();
 
   return (
     <div className="min-h-dvh">
@@ -19,6 +23,7 @@ export function AppLayout() {
           </Link>
 
           <nav className="hidden items-center gap-1 sm:flex">
+            <Tab to="/goals" end>Goals</Tab>
             {goalId && (
               <>
                 <Tab to={`/goals/${goalId}/plan`}>Study plan</Tab>
@@ -38,6 +43,7 @@ export function AppLayout() {
         </div>
 
         <nav className="flex gap-1 overflow-x-auto border-t border-line px-4 py-2 sm:hidden">
+          <Tab to="/goals" end>Goals</Tab>
           {goalId && (
             <>
               <Tab to={`/goals/${goalId}/plan`}>Study plan</Tab>
@@ -55,13 +61,14 @@ export function AppLayout() {
   );
 }
 
-function Tab({ to, children }) {
+function Tab({ to, children, end = false }) {
   return (
     <NavLink
       to={to}
+      end={end}
       className={({ isActive }) =>
         [
-          'ease-lakshya rounded-full px-3.5 py-1.5 text-sm transition duration-200',
+          'ease-lakshya shrink-0 whitespace-nowrap rounded-full px-3.5 py-1.5 text-sm transition duration-200',
           isActive ? 'bg-ink text-paper' : 'text-ink-soft hover:bg-sunk hover:text-ink',
         ].join(' ')
       }

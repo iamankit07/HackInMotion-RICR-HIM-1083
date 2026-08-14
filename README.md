@@ -94,6 +94,14 @@ There is also a 3D anatomy viewer on topics where one helps, aimed at NEET
 preparation. It loads only when a student asks for it, so the plan screens stay
 fast on a phone.
 
+Put a Quest on and the same viewer opens in the headset. It is a WebXR session
+on the canvas that is already running, not a second app, so there is nothing to
+install and nothing to keep in sync. The button only shows up on hardware that
+says it can do it, which no laptop does, and the model is placed at roughly
+human height in front of you rather than framed for a screen. A standalone
+headset build is linked beside the viewer for anyone who would rather sideload
+it than open a browser.
+
 ---
 
 ## Technology Stack
@@ -105,6 +113,7 @@ fast on a phone.
 | Database | MongoDB Atlas (Mongoose) | Study plans are nested, irregular documents — a document store fits better than rigid tables |
 | Authentication | JWT with bcrypt password hashing | Stateless, no session store needed, simple to deploy |
 | AI / LLM | Google Gemini (primary), Groq (fallback) | See below |
+| 3D and VR | three.js via React Three Fiber, WebXR | Anatomy models on a screen or in a headset, out of one renderer |
 | Deployment | Vercel (frontend) · Render (backend) · MongoDB Atlas (database) | Free tiers sufficient for the demo |
 
 ### AI Provider: which, why, and how
@@ -272,7 +281,8 @@ red topics get the time, amber ones get a shorter pass.
 ### Seeing it in 3D
 
 Anatomy topics offer the relevant system as a model you can rotate. It loads
-only when you ask for it, so the plan screens stay fast on a phone.
+only when you ask for it, so the plan screens stay fast on a phone. Open the
+same page on a Quest and a second button appears to put it in the headset.
 
 ![3D anatomy viewer](assets/screenshots/03-anatomy-3d.png)
 

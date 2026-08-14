@@ -7,6 +7,7 @@ import { Progress } from '../models/Progress.js';
 import { AllProvidersFailedError } from '../services/ai/errors.js';
 import { buildTopicGraph, sanitise } from '../services/topicGraph.js';
 import { writeTopicNotes } from '../services/topicNotes.js';
+import { summariseAchievements } from '../services/gamification.js';
 import { ensureProgressRecords, summariseProgress } from '../services/progressService.js';
 import { currentPlanFor, summarisePlan } from '../services/planService.js';
 
@@ -138,6 +139,23 @@ export const getTopicNotes = asyncHandler(async (req, res) => {
   await req.goal.save();
 
   res.json({ data: { topic, notes, cached: false } });
+});
+
+/**
+ * Streaks, points and badges for this goal. Derived from work already recorded,
+ * so it costs two reads and never needs keeping in sync.
+ */
+export const getAchievements = asyncHandler(async (req, res) => {
+  const assessments = await Assessment.find({ goal: req.goal._id })
+    .select('score submittedAt questions.prompt')
+    .lean();
+
+  const achievements = await summariseAchievements(
+    { user: req.user._id, goal: req.goal._id },
+    { assessments },
+  );
+
+  res.json({ data: { achievements } });
 });
 
 async function applyTopics(goal, topics, { fromFallback }) {

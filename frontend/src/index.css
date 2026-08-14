@@ -16,11 +16,19 @@
   --surface-sunk: #f4ede3;
   --ink: #1f1a16;
   --ink-soft: #574c43;
-  --ink-muted: #877a6e;
+  /* Darkened from #877a6e, which only reached 3.9:1 on paper — under the 4.5:1
+     needed to be readable. This clears it on paper, surface and sunk alike. */
+  --ink-muted: #6f635a;
   --line: #e7dcce;
   --line-strong: #d3c4b1;
 
-  --saffron: #d1651a;
+  /* Deepened from #d1651a for the same reason: as a link it managed 3.5:1, and
+     white on it as a button only 3.8:1. Both clear 4.5:1 now. */
+  --saffron: #a54c0c;
+
+  /* What is legible printed on a saffron fill. White here, near-black in dark
+     mode, where the accent is a much lighter orange. */
+  --on-accent: #ffffff;
   --saffron-soft: #f7e7d6;
   --amber: #e0a02a;
   --teal: #146b5d;
@@ -44,6 +52,9 @@
     --line-strong: #443a2f;
 
     --saffron: #ef8b3d;
+    /* The dark accent is a light orange, so white on it is unreadable (2.5:1).
+       Near-black reads cleanly (7.5:1). */
+    --on-accent: #15120f;
     --saffron-soft: #38251400;
     --amber: #edb44e;
     --teal: #4bab99;
@@ -67,6 +78,9 @@
   --line-strong: #443a2f;
 
   --saffron: #ef8b3d;
+    /* The dark accent is a light orange, so white on it is unreadable (2.5:1).
+       Near-black reads cleanly (7.5:1). */
+    --on-accent: #15120f;
   --saffron-soft: #382514;
   --amber: #edb44e;
   --teal: #4bab99;
@@ -88,6 +102,7 @@
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
   --color-saffron: var(--saffron);
+  --color-on-accent: var(--on-accent);
   --color-saffron-soft: var(--saffron-soft);
   --color-amber: var(--amber);
   --color-teal: var(--teal);
@@ -156,6 +171,22 @@
   button:disabled,
   [aria-disabled='true'] {
     cursor: not-allowed;
+  }
+
+  /*
+    Inside a form, `cursor: auto` on the wrappers resolves to a text caret over
+    anything the browser considers text — so the I-beam appeared in the gaps
+    around a field, as though the box were bigger than it looks. Only the field
+    itself should offer to type into.
+  */
+  form,
+  fieldset {
+    cursor: default;
+  }
+
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([disabled]),
+  textarea:not([disabled]) {
+    cursor: text;
   }
 
   /*

@@ -28,6 +28,15 @@ export const replanSchema = z.object({
   reason: z.string().trim().max(60).optional(),
 });
 
+/** A doubt asked from the dashboard: just the question, no topic to scope it. */
+export const askDoubtSchema = z.object({
+  question: z
+    .string()
+    .trim()
+    .min(3, 'Ask a question and the tutor will answer it')
+    .max(2000, 'That question is longer than the tutor can take in one go'),
+});
+
 export const askTutorSchema = z.object({
   question: z
     .string()

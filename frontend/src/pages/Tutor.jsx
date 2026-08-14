@@ -8,6 +8,7 @@ import { Textarea } from '../components/ui/Field.jsx';
 import { RichText } from '../components/ui/RichText.jsx';
 import { api } from '../lib/api.js';
 import { useResource } from '../lib/useResource.js';
+import { useVoice } from '../lib/useVoice.js';
 
 export default function Tutor() {
   const { goalId } = useParams();
@@ -21,8 +22,17 @@ export default function Tutor() {
   const [topicKey, setTopicKey] = useState(location.state?.topicKey ?? '');
   const [sending, setSending] = useState(false);
   const [error, setError] = useState(null);
+  // Only read answers aloud when the question was asked aloud. Someone typing
+  // in a library does not expect the page to start talking.
+  const [askedByVoice, setAskedByVoice] = useState(false);
 
   const endRef = useRef(null);
+
+  const voice = useVoice({
+    onTranscript: (text) => {
+      setQuestion((current) => (current ? `${current} ${text}` : text));
+    },
+  });
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -41,6 +51,12 @@ export default function Tutor() {
 
     setSending(true);
     setError(null);
+    voice.stopListening();
+
+    // Held until after the request has settled: reading the answer out is a
+    // separate concern from sending it, and must never be able to report the
+    // question as failed.
+    let spokenReply = null;
 
     // Show the question immediately rather than after the round trip — a tutor
     // that appears to swallow your message feels broken even when it is not.
@@ -57,6 +73,7 @@ export default function Tutor() {
       setConversation(payload.conversation);
       setQuestion('');
       history.reload();
+      spokenReply = askedByVoice ? payload.conversation?.messages?.at(-1) : null;
     } catch (caught) {
       setError(caught);
       // Put the question back so nothing the student typed is lost.
@@ -65,6 +82,11 @@ export default function Tutor() {
     } finally {
       setSending(false);
     }
+
+    if (spokenReply?.role === 'assistant') {
+      voice.speak(spokenReply.content);
+    }
+    setAskedByVoice(false);
   };
 
   const openConversation = async (id) => {
@@ -94,7 +116,12 @@ export default function Tutor() {
           ) : (
             <ul className="flex flex-col gap-4">
               {messages.map((message, index) => (
-                <Message key={index} message={message} />
+                <Message
+                  key={index}
+                  message={message}
+                  voice={voice}
+                  isLast={index === messages.length - 1}
+                />
               ))}
               {sending && <Thinking />}
             </ul>
@@ -126,7 +153,32 @@ export default function Tutor() {
             </select>
           )}
 
+          {voice.error && (
+            <p className="mb-2 text-[0.8125rem] text-clay">{voice.error}</p>
+          )}
+
+          {voice.listening && (
+            <p className="mb-2 flex items-center gap-2 text-[0.8125rem] text-saffron">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-saffron opacity-70" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-saffron" />
+              </span>
+              Listening{voice.interim ? `: ${voice.interim}` : '…'}
+            </p>
+          )}
+
           <div className="flex items-end gap-2">
+            {voice.canListen && (
+              <MicButton
+                listening={voice.listening}
+                onStart={() => {
+                  setAskedByVoice(true);
+                  voice.startListening();
+                }}
+                onStop={voice.stopListening}
+              />
+            )}
+
             <Textarea
               value={question}
               onChange={(event) => setQuestion(event.target.value)}
@@ -192,8 +244,34 @@ export default function Tutor() {
   );
 }
 
-function Message({ message }) {
+/** Hold to talk, or click to start and click again to stop. */
+function MicButton({ listening, onStart, onStop }) {
+  return (
+    <button
+      type="button"
+      onClick={listening ? onStop : onStart}
+      aria-label={listening ? 'Stop listening' : 'Ask by voice'}
+      aria-pressed={listening}
+      title={listening ? 'Stop listening' : 'Ask by voice'}
+      className={[
+        'ease-lakshya flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border transition duration-200',
+        listening
+          ? 'border-saffron bg-saffron text-on-accent'
+          : 'border-line text-ink-soft hover:border-line-strong hover:bg-sunk hover:text-ink',
+      ].join(' ')}
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <rect x="9" y="3" width="6" height="11" rx="3" stroke="currentColor" strokeWidth="1.8" />
+        <path d="M5.5 11.5a6.5 6.5 0 0 0 13 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+        <path d="M12 18v3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      </svg>
+    </button>
+  );
+}
+
+function Message({ message, voice, isLast }) {
   const isStudent = message.role === 'user';
+  const canRead = !isStudent && voice?.canSpeak && message.content;
 
   return (
     <li className={['flex', isStudent ? 'justify-end' : 'justify-start'].join(' ')}>
@@ -208,8 +286,46 @@ function Message({ message }) {
         ].join(' ')}
       >
         <RichText content={message.content} />
+
+        {canRead && (
+          <button
+            type="button"
+            onClick={() =>
+              voice.speaking && isLast ? voice.stopSpeaking() : voice.speak(message.content)
+            }
+            className="ease-lakshya mt-2.5 inline-flex items-center gap-1.5 rounded-lg text-xs text-ink-muted transition hover:text-saffron"
+          >
+            {voice.speaking && isLast ? (
+              <>
+                <StopIcon /> Stop reading
+              </>
+            ) : (
+              <>
+                <SpeakerIcon /> Read aloud
+              </>
+            )}
+          </button>
+        )}
       </div>
     </li>
+  );
+}
+
+function SpeakerIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+      <path d="M15.5 9a4 4 0 0 1 0 6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+      <path d="M18 6.5a7.5 7.5 0 0 1 0 11" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function StopIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="6" y="6" width="12" height="12" rx="2.5" fill="currentColor" />
+    </svg>
   );
 }
 

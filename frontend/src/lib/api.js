@@ -107,6 +107,22 @@ export const api = {
     setTopics: (goalId, topics) => request(goalPath(goalId, '/topics'), { method: 'PUT', body: { topics } }),
     topicNotes: (goalId, topicKey) =>
       request(goalPath(goalId, `/topics/${encodeURIComponent(topicKey)}/notes`)),
+    achievements: (goalId) => request(goalPath(goalId, '/achievements')),
+  },
+
+  doubts: {
+    list: () => request('/doubts'),
+    ask: (question) => request('/doubts', { method: 'POST', body: { question } }),
+    reply: (conversationId, question) =>
+      request(`/doubts/${conversationId}/messages`, { method: 'POST', body: { question } }),
+  },
+
+  groups: {
+    list: () => request('/groups'),
+    create: (body) => request('/groups', { method: 'POST', body }),
+    join: (body) => request('/groups/join', { method: 'POST', body }),
+    get: (groupId) => request(`/groups/${groupId}`),
+    leave: (groupId) => request(`/groups/${groupId}/leave`, { method: 'POST' }),
   },
 
   plan: {

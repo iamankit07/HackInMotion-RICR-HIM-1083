@@ -1,4 +1,5 @@
 import { AllProvidersFailedError } from './errors.js';
+import { deflate, deflateDeep } from './deflate.js';
 import { gemini } from './gemini.js';
 import { groq } from './groq.js';
 
@@ -22,9 +23,11 @@ export function getAiStatus() {
  * Free-form generation, used by the tutor chat.
  */
 export function generateText({ system, prompt, messages, temperature = 0.7, maxOutputTokens }) {
+  // Every prompt asks the model to avoid the machine-written tells. This makes
+  // sure, because a prompt is a request and a student reads whatever comes back.
   return dispatch(
     { system, messages: toMessages(prompt, messages), temperature, maxOutputTokens },
-    (text) => text,
+    (text) => deflate(text),
   );
 }
 
@@ -47,7 +50,10 @@ export function generateJson({
     { system, messages: toMessages(prompt, messages), temperature, maxOutputTokens, responseSchema },
     (text) => {
       const parsed = JSON.parse(extractJson(text));
-      return schema ? schema.parse(parsed) : parsed;
+      const validated = schema ? schema.parse(parsed) : parsed;
+
+      // After validation, so cleaning can never turn a valid response invalid.
+      return deflateDeep(validated);
     },
   );
 }

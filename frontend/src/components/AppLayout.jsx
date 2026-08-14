@@ -15,7 +15,7 @@ export function AppLayout() {
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
           <Link to="/goals" className="flex items-center gap-2.5">
             <Logo size={26} />
-            <span className="font-display text-xl font-semibold tracking-tight">Lakshya</span>
+            <span className="select-none font-display text-xl font-semibold tracking-tight">Lakshya</span>
           </Link>
 
           {goalId && (

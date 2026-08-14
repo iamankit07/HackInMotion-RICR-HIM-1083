@@ -18,7 +18,7 @@ export function AuthShell({ title, subtitle, children, footer }) {
         <div className="grain-free mx-auto w-full max-w-sm">
           <Link to="/" className="mb-10 inline-flex items-center gap-2.5">
             <Logo size={28} />
-            <span className="font-display text-xl font-semibold tracking-tight">Lakshya</span>
+            <span className="select-none font-display text-xl font-semibold tracking-tight">Lakshya</span>
           </Link>
 
           <h1 className="text-3xl font-semibold sm:text-4xl">{title}</h1>

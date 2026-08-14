@@ -12,13 +12,36 @@ export function ThemeToggle({ className = '' }) {
       aria-label={isDark ? 'Switch to light view' : 'Switch to dark view'}
       title={isDark ? 'Switch to light view' : 'Switch to dark view'}
       className={[
-        'ease-lakshya inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full',
+        // 32px square, the same height as a small Button, so the three controls
+        // in the header line up instead of one bulging above the others.
+        'ease-lakshya inline-flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full',
         'border border-line-strong text-ink-soft transition duration-200',
         'hover:-translate-y-px hover:border-ink hover:bg-sunk hover:text-ink active:translate-y-0',
         className,
       ].join(' ')}
     >
-      {isDark ? <SunIcon /> : <MoonIcon />}
+      {/*
+        The icon turns and fades between the two states rather than snapping.
+        Both are rendered and stacked so one can leave while the other arrives.
+      */}
+      <span className="relative flex h-4 w-4 items-center justify-center">
+        <span
+          className={[
+            'ease-lakshya absolute inset-0 flex items-center justify-center transition-all duration-300',
+            isDark ? 'rotate-0 scale-100 opacity-100' : '-rotate-90 scale-50 opacity-0',
+          ].join(' ')}
+        >
+          <SunIcon />
+        </span>
+        <span
+          className={[
+            'ease-lakshya absolute inset-0 flex items-center justify-center transition-all duration-300',
+            isDark ? 'rotate-90 scale-50 opacity-0' : 'rotate-0 scale-100 opacity-100',
+          ].join(' ')}
+        >
+          <MoonIcon />
+        </span>
+      </span>
     </button>
   );
 }

@@ -30,10 +30,13 @@ const STEPS = [
 export default function Landing() {
   return (
     <div className="min-h-dvh">
-      <header className="grain-free mx-auto flex max-w-6xl items-center justify-between px-5 py-6 sm:px-8">
+      {/* z-20: the hero's backdrop rings sit in the next section, which shares
+          the same stacking level and comes later in the document — without
+          this the artwork is drawn straight across these buttons. */}
+      <header className="grain-free relative z-20 mx-auto flex max-w-6xl items-center justify-between px-5 py-6 sm:px-8">
         <div className="flex items-center gap-2.5">
           <Logo size={28} />
-          <span className="font-display text-xl font-semibold tracking-tight">Lakshya</span>
+          <span className="select-none font-display text-xl font-semibold tracking-tight">Lakshya</span>
         </div>
 
         <div className="flex items-center gap-2">

@@ -40,6 +40,16 @@ function normalise(err) {
     return { status: err.status, message: err.message, details: err.details };
   }
 
+  // body-parser throws these. They were reaching the catch-all below and coming
+  // back as a 500, which reads like our fault rather than a broken request.
+  if (err.type === 'entity.parse.failed') {
+    return { status: 400, message: 'That request body was not valid JSON.' };
+  }
+
+  if (err.type === 'entity.too.large') {
+    return { status: 413, message: 'That request was too large.' };
+  }
+
   if (err.name === 'ValidationError' && err.errors) {
     return {
       status: 400,

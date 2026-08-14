@@ -74,7 +74,25 @@ Keeping the schedule out of the language model is a deliberate engineering decis
 5. Ask the built-in tutor questions about whatever they're studying right now.
 6. Mark sessions complete and watch progress against the plan.
 7. Generate mock tests from their own plan's topics to validate what stuck.
-8. Fall behind, and have the plan quietly rebuild itself around the time that's left.
+8. Read AI-written revision notes for any topic — written once per topic and kept, not
+   regenerated on every visit.
+9. Fall behind, and have the plan quietly rebuild itself around the time that's left.
+
+### Beyond the brief
+
+The problem statement lists five stretch challenges. Four of them are built:
+
+| Challenge | How it works here |
+|---|---|
+| **Adaptive re-planning** | Missing two sessions rebuilds the schedule the next time the plan is opened, at most once a day so it never shifts under someone mid-session. A bad mock test does the same, around the topics it exposed. |
+| **Spaced repetition** | SM-2. Revision is scheduled just before a topic would be forgotten, and the gap widens each time it is recalled. A failed re-test resets the ladder. |
+| **Voice doubt-solving** | Ask by speech, hear the answer read back, using the browser's own speech APIs — no extra dependency. |
+| **Gamification** | Streaks, points and badges, all derived from progress records so they survive a plan being rebuilt. |
+| **Group study** | Students join with a code and compare progress on a shared board. Membership pairs a person with **their own** goal — nothing about anyone's plan, chat or answers crosses between accounts. |
+
+There is also a 3D anatomy viewer on topics where one helps, aimed at NEET
+preparation. It loads only when a student asks for it, so the plan screens stay
+fast on a phone.
 
 ---
 
@@ -248,8 +266,6 @@ Schema definitions and the reasoning behind them: [`docs/database-design.md`](do
 
 ## Future Scope
 
-- **Group study mode** — students preparing for the same exam compare progress and share plans.
-- **Voice doubt-solving** — ask a question out loud, hear the explanation back, for revision on the move.
 - **Institution dashboard** — teachers see aggregate weak topics across a class and adjust teaching.
 - **Offline-first plans** — service worker caching so the day's plan opens without a connection.
 - **Regional language support** — explanations in Hindi and other Indian languages, which is where

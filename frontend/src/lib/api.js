@@ -105,6 +105,8 @@ export const api = {
 
     generateTopics: (goalId) => request(goalPath(goalId, '/topics/generate'), { method: 'POST' }),
     setTopics: (goalId, topics) => request(goalPath(goalId, '/topics'), { method: 'PUT', body: { topics } }),
+    topicNotes: (goalId, topicKey) =>
+      request(goalPath(goalId, `/topics/${encodeURIComponent(topicKey)}/notes`)),
   },
 
   plan: {

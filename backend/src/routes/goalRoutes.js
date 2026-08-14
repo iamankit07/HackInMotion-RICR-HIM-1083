@@ -4,6 +4,7 @@ import {
   createGoal,
   deleteGoal,
   generateTopics,
+  getTopicNotes,
   getGoal,
   listGoals,
   setTopics,
@@ -70,6 +71,7 @@ scoped
 
 scoped.post('/topics/generate', generateTopics);
 scoped.put('/topics', validate({ body: manualTopicsSchema }), setTopics);
+scoped.get('/topics/:topicKey/notes', getTopicNotes);
 
 scoped.route('/plan').get(getPlan).post(createPlan);
 scoped.post('/plan/replan', validate({ body: replanSchema }), replan);

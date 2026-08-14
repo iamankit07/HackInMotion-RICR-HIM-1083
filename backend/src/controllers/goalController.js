@@ -6,6 +6,7 @@ import { Progress } from '../models/Progress.js';
 
 import { AllProvidersFailedError } from '../services/ai/errors.js';
 import { buildTopicGraph, sanitise } from '../services/topicGraph.js';
+import { writeTopicNotes } from '../services/topicNotes.js';
 import { ensureProgressRecords, summariseProgress } from '../services/progressService.js';
 import { currentPlanFor, summarisePlan } from '../services/planService.js';
 
@@ -96,6 +97,47 @@ export const setTopics = asyncHandler(async (req, res) => {
   await applyTopics(req.goal, topics, { fromFallback: true });
 
   res.json({ data: { goal: req.goal, topics: req.goal.topics } });
+});
+
+/**
+ * The study material for one topic, written on first request and kept after.
+ * Notes already on the topic are returned as they are — rewriting them would
+ * spend an AI call to produce the same thing.
+ */
+export const getTopicNotes = asyncHandler(async (req, res) => {
+  const topic = req.goal.topics.find((candidate) => candidate.key === req.params.topicKey);
+
+  if (!topic) {
+    throw ApiError.notFound('That topic is not part of this goal.');
+  }
+
+  if (topic.notes) {
+    res.json({ data: { topic, notes: topic.notes, cached: true } });
+    return;
+  }
+
+  const progress = await Progress.findOne({ goal: req.goal._id, topicKey: topic.key }).lean();
+
+  let notes;
+
+  try {
+    notes = await writeTopicNotes({ goal: req.goal, topic, mastery: progress?.mastery });
+  } catch (error) {
+    if (error instanceof AllProvidersFailedError) {
+      throw ApiError.serviceUnavailable(
+        'We could not reach the AI service to write these notes. Your plan is unaffected — ' +
+          'try again in a moment, or ask the tutor about this topic instead.',
+      );
+    }
+
+    throw error;
+  }
+
+  topic.notes = notes;
+  topic.notesWrittenAt = new Date();
+  await req.goal.save();
+
+  res.json({ data: { topic, notes, cached: false } });
 });
 
 async function applyTopics(goal, topics, { fromFallback }) {

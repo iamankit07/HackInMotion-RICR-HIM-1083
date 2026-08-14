@@ -24,6 +24,12 @@ const topicSchema = new mongoose.Schema(
 
     // Keys of topics that should be studied first.
     prerequisites: { type: [String], default: [] },
+
+    // The study material for this topic, written once and then kept. Writing it
+    // costs an AI call, so it is generated when a student first opens the topic
+    // rather than for the whole syllabus up front, and never written twice.
+    notes: { type: String, default: '' },
+    notesWrittenAt: { type: Date },
   },
   { _id: false },
 );

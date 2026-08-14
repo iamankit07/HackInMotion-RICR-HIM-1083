@@ -5,6 +5,7 @@ import { Card } from '../components/ui/Card.jsx';
 import { Loading, Notice } from '../components/ui/Feedback.jsx';
 import { MasteryBar } from '../components/ProgressRing.jsx';
 import { TopicVisual } from '../components/TopicVisual.jsx';
+import { TopicNotes } from '../components/TopicNotes.jsx';
 import { RichInline } from '../components/ui/RichText.jsx';
 import { api } from '../lib/api.js';
 import { useResource } from '../lib/useResource.js';
@@ -69,6 +70,8 @@ export default function TopicExplorer() {
           </p>
         )}
       </header>
+
+      <TopicNotes goalId={goalId} topic={topic} />
 
       <TopicVisual topic={topic} />
 

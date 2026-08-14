@@ -9,6 +9,7 @@ import { SessionRow } from '../components/SessionRow.jsx';
 import { api } from '../lib/api.js';
 import { useResource } from '../lib/useResource.js';
 import { formatDate, formatMinutes, formatWeekday } from '../lib/format.js';
+import { withPartNumbers } from '../lib/sessionParts.js';
 
 export default function StudyPlan() {
   const { goalId } = useParams();
@@ -43,7 +44,8 @@ export default function StudyPlan() {
     return <Notice title="We could not open your plan" onRetry={today.reload}>{today.error.message}</Notice>;
   }
 
-  const { summary, progress, sessions, overdue } = today.data;
+  const { summary, progress, overdue } = today.data;
+  const sessions = withPartNumbers(today.data.sessions);
   const subject = goal.data?.goal?.subject ?? 'Your plan';
 
   const refresh = () => Promise.all([today.reload(), full.reload(), goal.reload()]);
@@ -240,7 +242,7 @@ function Stat({ label, value }) {
 }
 
 function Timeline({ plan }) {
-  const days = groupByDay(plan.sessions);
+  const days = groupByDay(withPartNumbers(plan.sessions));
 
   if (days.length === 0) {
     return <p className="mt-4 text-sm text-ink-muted">This plan has no sessions in it.</p>;
@@ -286,6 +288,11 @@ function Timeline({ plan }) {
                       }
                     >
                       {session.title}
+                      {session.partCount > 1 && (
+                        <span className="ml-2 text-xs text-ink-muted">
+                          part {session.part} of {session.partCount}
+                        </span>
+                      )}
                     </span>
                     <span className="ml-auto shrink-0 text-xs tabular-nums text-ink-muted">
                       {session.minutes}m

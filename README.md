@@ -96,9 +96,12 @@ fast on a phone.
 
 Put a Quest on and the same viewer opens in the headset. It is a WebXR session
 on the canvas that is already running, not a second app, so there is nothing to
-install and nothing to keep in sync. The button only shows up on hardware that
-says it can do it, which no laptop does, and the model is placed at roughly
-human height in front of you rather than framed for a screen. A standalone
+install and nothing to keep in sync. The button only shows up in a headset
+browser, and the model is placed at roughly human height in front of you rather
+than framed for a screen. Asking WebXR whether it supports an immersive session
+turned out not to be enough on its own — plenty of Android phones say yes and
+then open the session as a black screen — so the browser has to identify itself
+as a headset too. A standalone
 headset build is linked beside the viewer for anyone who would rather sideload
 it than open a browser.
 

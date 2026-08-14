@@ -89,6 +89,20 @@ export const VR_APK_URL =
 export const VR_APK_SIZE = '407 MB';
 
 /**
+ * Headset browsers, which is a narrower thing than "browsers with WebXR".
+ *
+ * Asking WebXR whether it can do an immersive session is not enough on its own.
+ * Android phones ship the API and a good number of them answer yes, so the
+ * button turned up on ordinary phones — and starting a session there gives a
+ * fullscreen black canvas, because there is no headset behind the answer.
+ *
+ * So the browser has to say it is a headset as well as say it is capable. This
+ * is a list of the ones we mean rather than a test, and that is the point: the
+ * button is only offered where the viewer has actually been tried.
+ */
+const HEADSET_BROWSER = /OculusBrowser|Wolvic|Pico(?:Browser|VR)|\bQuest\b/i;
+
+/**
  * Whether this browser can open an immersive session — true in the Quest
  * browser, false on every laptop and phone the app is normally used from.
  *
@@ -100,9 +114,12 @@ let vrSupport = null;
 export function checkVrSupport() {
   if (vrSupport) return vrSupport;
 
-  vrSupport = navigator.xr?.isSessionSupported
-    ? navigator.xr.isSessionSupported('immersive-vr').catch(() => false)
-    : Promise.resolve(false);
+  const headset = HEADSET_BROWSER.test(navigator.userAgent ?? '');
+
+  vrSupport =
+    headset && navigator.xr?.isSessionSupported
+      ? navigator.xr.isSessionSupported('immersive-vr').catch(() => false)
+      : Promise.resolve(false);
 
   return vrSupport;
 }

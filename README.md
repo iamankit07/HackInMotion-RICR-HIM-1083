@@ -289,6 +289,8 @@ same page on a Quest and a second button appears to put it in the headset.
 
 ![3D anatomy viewer](assets/screenshots/03-anatomy-3d.png)
 
+https://github.com/user-attachments/assets/b3e5375c-fe82-447c-b8fe-774a48817eb3
+
 ### Asking a doubt
 
 The tutor knows your subject, the topic you are on, and which topics you scored
